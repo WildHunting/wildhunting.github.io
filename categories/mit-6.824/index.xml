@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>mit 6.824 on Wild Hunt</title>
-    <link>https://wildhunting.github.io/categories/mit-6.824/</link>
+    <link>/categories/mit-6.824/</link>
     <description>Recent content in mit 6.824 on Wild Hunt</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 14 Apr 2023 18:43:35 +0800</lastBuildDate><atom:link href="https://wildhunting.github.io/categories/mit-6.824/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 14 Apr 2023 18:43:35 +0800</lastBuildDate><atom:link href="/categories/mit-6.824/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>6.824 lab1 解析</title>
-      <link>https://wildhunting.github.io/posts/6.824/6.824-lab1/</link>
+      <link>/posts/6.824/6.824-lab1/</link>
       <pubDate>Fri, 14 Apr 2023 18:43:35 +0800</pubDate>
       
-      <guid>https://wildhunting.github.io/posts/6.824/6.824-lab1/</guid>
+      <guid>/posts/6.824/6.824-lab1/</guid>
       <description>6.824 lab1 笔记 1. 阅读论文 略
 2. 官网rules &amp;amp; hints 2.1 rules map阶段每个worker应该把中间文件分成nReduce份，nReduce是reduce任务的数量 worker完成reduce任务后生成文件名mr-out-X mr-out-X文件每行应该是 &amp;quot;%v %v&amp;quot;格式，参考main/mrsequential.go worker处理完map任务，应该把生成的中间文件放到当前目录中，便于worker执行reduce任务时读取中间文件 当所有任务完成时，Done()函数应该返回true，使得coordinator退出 所有任务完成时，worker应该退出，方法是： 当worker调用rpc向coordinator请求任务时，连接不上coordinator，此时可以认为coordinator已经退出因为所有任务已经完成了 当worker调用rpc向coordinator请求任务时，coordinator可以向其回复所有任务已经完成 2.2 hints 刚开始可以修改mr/worker.go&amp;rsquo;s Worker()向coordinator 发送一个RPC请求一个任务。然后修改coordinator回复一个文件名，代表空闲的map任务。然后worker根据文件名读取文件，调用wc.so-Map函数，调用Map函数可参考mrsequential.go
 如果修改了 mr/ 目录下任何文件，应该重新build MapReduce plugins，go build -buildmode=plugin ../mrapps/wc.go

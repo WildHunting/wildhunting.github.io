@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>raft on Wild Hunt</title>
-    <link>https://wildhunting.github.io/tags/raft/</link>
+    <link>/tags/raft/</link>
     <description>Recent content in raft on Wild Hunt</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Wed, 12 Apr 2023 21:45:37 +0800</lastBuildDate><atom:link href="https://wildhunting.github.io/tags/raft/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 12 Apr 2023 21:45:37 +0800</lastBuildDate><atom:link href="/tags/raft/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>ETCD RAFT选举源码解析</title>
-      <link>https://wildhunting.github.io/posts/etcd/raft-leader-election/</link>
+      <link>/posts/etcd/raft-leader-election/</link>
       <pubDate>Wed, 12 Apr 2023 21:45:37 +0800</pubDate>
       
-      <guid>https://wildhunting.github.io/posts/etcd/raft-leader-election/</guid>
+      <guid>/posts/etcd/raft-leader-election/</guid>
       <description>ETCD-raft笔记 0. 引言 该篇博客基于etcd v3.5.7版本，首先会简单介绍etcd/raft对Raft选举部分的算法优化，然后通过源码分析etcd/raft的选举实现。
 1. etcd对于raft选举算法优化措施 该优化措施均在raft博士论文中有讲解
 etcd/raft实现的与选举有关的优化有Pre-Vote、Check Quorum、和Leader Lease。在这三种优化中，只有Pre-Vote和Leader Lease最初是对选举过程的优化，Check Quorum是为了更高效地实现线性一致性读（Linearizable Read）而做出的优化，但是由于Leader Lease需要依赖Check Quorum，因此也放在这讲。

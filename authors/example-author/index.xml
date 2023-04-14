@@ -2,9 +2,9 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Example Author on Wild Hunt</title>
-    <link>https://wildhunting.github.io/authors/example-author/</link>
+    <link>/authors/example-author/</link>
     <description>Recent content in Example Author on Wild Hunt</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language><atom:link href="https://wildhunting.github.io/authors/example-author/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language><atom:link href="/authors/example-author/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

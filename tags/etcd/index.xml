@@ -2,26 +2,26 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>etcd on Wild Hunt</title>
-    <link>https://wildhunting.github.io/tags/etcd/</link>
+    <link>/tags/etcd/</link>
     <description>Recent content in etcd on Wild Hunt</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 14 Apr 2023 18:51:09 +0800</lastBuildDate><atom:link href="https://wildhunting.github.io/tags/etcd/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 14 Apr 2023 18:51:09 +0800</lastBuildDate><atom:link href="/tags/etcd/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>WAL Method</title>
-      <link>https://wildhunting.github.io/posts/etcd/wal-method/</link>
+      <link>/posts/etcd/wal-method/</link>
       <pubDate>Fri, 14 Apr 2023 18:51:09 +0800</pubDate>
       
-      <guid>https://wildhunting.github.io/posts/etcd/wal-method/</guid>
+      <guid>/posts/etcd/wal-method/</guid>
       <description>Method&amp;mdash;wal.go Description func Create(lg *zap.Logger, dirpath string, metadata []byte) (*WAL, error) 初次启动raftNode时调用WAL.Create方法。创建WAL对象用于记录追加 ：判断是否存在dirpath路径，如果已存在则不是初次启动raftNode，返回os.ErrExist。创建临时目录和初始上锁的wal文件—walName（seq=0 &amp;amp; index=0），seek到文件末尾（why？），预分配该wal文件大小（SegmentSizeBytes=64MB，优化追加速度），创建WAL对象并设定路径、 metadata（NodeID和ClusterID）、编码器，将上锁的WAL文件追加到锁表内，然后依次写入crc、metadata和空snapshot，重命名临时目录，同步临时目录的父目录（fsync）使得重命名持久化。 func (w *WAL) renameWAL(tmpdirpath string) (*WAL, error) 移除w.dir目录及目录下所有文件和文件夹，调用os.Rename(tmpdirpath, w.dir)将Create方法内创建的临时目录重命名，创建FilePipeline和dirFile *os.File，dirFile is a fd for the wal directory for syncing on Rename func (w *WAL) SaveSnapshot(e walpb.Snapshot) error 检验snapshot是否合法（Since etcd&amp;gt;=3.5.0），pb序列化snapshot得到data字段，加锁，调用w.encoder.encode方法写入record，更新w.enti如果snapshot index &amp;gt; 原w.enti，解锁。 func (w *WAL) saveCrc(prevCrc uint32) error 写入crcType的记录 func (w *WAL) Save(st raftpb.HardState, ents []raftpb.Entry) error 加锁，如果hardstate和entries为空，返回。判断是否需要sync（entries长度不为0||vote改变||term改变），写入entries和hardstate，判断文件当前位置是否小于SegmentSizeBytes（默认64M），如果小于判断是否需要sync数据，如果不小于，返回cut操作结果，解锁。 func (w *WAL) saveEntry(e *raftpb.Entry) error 写入一条entry记录并更新WAL对象的enti值 func (w *WAL) saveState(s *raftpb.</description>
     </item>
     
     <item>
       <title>ETCD RAFT选举源码解析</title>
-      <link>https://wildhunting.github.io/posts/etcd/raft-leader-election/</link>
+      <link>/posts/etcd/raft-leader-election/</link>
       <pubDate>Wed, 12 Apr 2023 21:45:37 +0800</pubDate>
       
-      <guid>https://wildhunting.github.io/posts/etcd/raft-leader-election/</guid>
+      <guid>/posts/etcd/raft-leader-election/</guid>
       <description>ETCD-raft笔记 0. 引言 该篇博客基于etcd v3.5.7版本，首先会简单介绍etcd/raft对Raft选举部分的算法优化，然后通过源码分析etcd/raft的选举实现。
 1. etcd对于raft选举算法优化措施 该优化措施均在raft博士论文中有讲解
 etcd/raft实现的与选举有关的优化有Pre-Vote、Check Quorum、和Leader Lease。在这三种优化中，只有Pre-Vote和Leader Lease最初是对选举过程的优化，Check Quorum是为了更高效地实现线性一致性读（Linearizable Read）而做出的优化，但是由于Leader Lease需要依赖Check Quorum，因此也放在这讲。

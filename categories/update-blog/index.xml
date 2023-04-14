@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>update blog on Wild Hunt</title>
+    <link>/categories/update-blog/</link>
+    <description>Recent content in update blog on Wild Hunt</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Fri, 14 Apr 2023 21:34:52 +0800</lastBuildDate><atom:link href="/categories/update-blog/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Update blog</title>
+      <link>/posts/update_blog/</link>
+      <pubDate>Fri, 14 Apr 2023 21:34:52 +0800</pubDate>
+      
+      <guid>/posts/update_blog/</guid>
+      <description>How to upadte my blog update public first cd blog root directory hugo -D push to github cd public git add -A git commit -m &amp;quot;date&amp;quot; git push -u origin master </description>
+    </item>
+    
+  </channel>
+</rss>
