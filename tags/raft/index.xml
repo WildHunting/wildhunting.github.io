@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>raft on Wild Hunt</title>
+    <link>https://wildhunting.github.io/tags/raft/</link>
+    <description>Recent content in raft on Wild Hunt</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 12 Apr 2023 21:45:37 +0800</lastBuildDate><atom:link href="https://wildhunting.github.io/tags/raft/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ETCD RAFT选举源码解析</title>
+      <link>https://wildhunting.github.io/posts/etcd/raft-leader-election/</link>
+      <pubDate>Wed, 12 Apr 2023 21:45:37 +0800</pubDate>
+      
+      <guid>https://wildhunting.github.io/posts/etcd/raft-leader-election/</guid>
+      <description>ETCD-raft笔记 0. 引言 该篇博客基于etcd v3.5.7版本，首先会简单介绍etcd/raft对Raft选举部分的算法优化，然后通过源码分析etcd/raft的选举实现。
+1. etcd对于raft选举算法优化措施 该优化措施均在raft博士论文中有讲解
+etcd/raft实现的与选举有关的优化有Pre-Vote、Check Quorum、和Leader Lease。在这三种优化中，只有Pre-Vote和Leader Lease最初是对选举过程的优化，Check Quorum是为了更高效地实现线性一致性读（Linearizable Read）而做出的优化，但是由于Leader Lease需要依赖Check Quorum，因此也放在这讲。
+1.1 Pre-Vote 如下图所示，当Raft集群的网络发生分区时，会出现节点数达不到quorum（达成共识至少需要的节点数）的分区，如图中的Partition 1。
+在节点数能够达到quorum的分区中，选举流程会正常进行，该分区中的所有节点的term最终会稳定为新选举出的leader节点的term。不幸的是，在节点数无法达到quorum的分区中，如果该分区中没有leader节点，因为节点总是无法收到数量达到quorum的投票而不会选举出新的leader，所以该分区中的节点在election timeout超时后，会增大term并发起下一轮选举，这导致该分区中的节点的term会不断增大。
+如果网络一直没有恢复，这是没有问题的。但是，如果网络分区恢复，此时，达不到quorum的分区中的节点的term值会远大于能够达到quorum的分区中的节点的term，这会导致能够达到quorum的分区的leader退位（step down）并增大自己的term到更大的term，使集群产生一轮不必要的选举。
+Pre-Vote机制就是为了解决这一问题而设计的，其解决的思路在于不允许达不到quorum的分区正常进入投票流程，也就避免了其term号的增大。为此，Pre-Vote引入了“预投票”，也就是说，当节点election timeout超时时，它们不会立即增大自身的term并请求投票，而是先发起一轮预投票。收到预投票请求的节点不会退位。只有当节点收到了达到quorum的预投票响应时，节点才能增大自身term号并发起投票请求。这样，达不到quorum的分区中的节点永远无法增大term，也就不会在分区恢复后引起不必要的一轮投票。
+1.2 Check Quorum 在Raft算法中，保证线性一致性读取的最简单的方式，就是讲读请求同样当做一条Raft提议，通过与其它日志相同的方式执行，因此这种方式也叫作Log Read。显然，Log Read的性能很差。而在很多系统中，读多写少的负载是很常见的场景。因此，为了提高读取的性能，就要试图绕过日志机制。
+但是，直接绕过日志机制从leader读取，可能会读到陈旧的数据，也就是说存在stale read的问题。在下图的场景中，假设网络分区前，Node 5是整个集群的leader。在网络发生分区后，Partition 0分区中选举出了新leader，也就是图中的Node 1。
+但是，由于网络分区，Node 5无法收到Partition 0中节点的消息，Node 5不会意识到集群中出现了新的leader。此时，虽然它不能成功地完成日志提交，但是如果读取时绕过了日志，它还是能够提供读取服务的。这会导致连接到Node 5的client读取到陈旧的数据。
+Check Quorum可以减轻这一问题带来的影响，其机制也非常简单：让leader每隔一段时间主动地检查follower是否活跃。如果活跃的follower数量达不到quorum，那么说明该leader可能是分区前的旧leader，所以此时该leader会主动退位转为follower。
+需要注意的是，Check Quorum并不能完全避免stale read的发生，只能减小其发生时间，降低影响。如果需要严格的线性一致性，需要通过其它机制实现。
+1.3 Leader Lease 分布式系统中的网络环境十分复杂，有时可能出现网络不完全分区的情况，即整个整个网络拓补图是一个连通图，但是可能并非任意的两个节点都能互相访问。
+这种现象不止会出现在网络故障中，还会出现在成员变更中。在通过ConfChange移除节点时，不同节点应用该ConfChange的时间可能不同，这也可能导致这一现象发生——TODO （举个例子）。
+在上图的场景下，Node 1与Node 2之间无法通信。如果它们之间的通信中断前，Node 1是集群的leader，在通信中断后，Node 2无法再收到来自Node 1的心跳。因此，Node 2会开始选举。如果在Node 2发起选举前，Node 1和Node 3中都没有新的日志，那么Node 2仍可以收到能达到quorum的投票（来自Node 2本身的投票和来自Node 3的投票），并成为leader。
+Leader Lease机制对投票引入了一条新的约束以解决这一问题：当节点在election timeout超时前，如果收到了leader的消息，那么它不会为其它发起投票或预投票请求的节点投票。也就是说，Leader Lease机制会阻止了正常工作的集群中的节点给其它节点投票。
+Leader Lease需要依赖Check Quorum机制才能正常工作。接下来笔者通过一个例子说明其原因。
+假如在一个5个节点组成的Raft集群中，出现了下图中的分区情况：Node 1与Node 2互通，Node 3、Node 4、Node 5之间两两互通、Node 5与任一节点不通。在网络分区前，Node 1是集群的leader。</description>
+    </item>
+    
+  </channel>
+</rss>

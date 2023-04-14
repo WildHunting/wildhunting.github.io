@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>6.824 lab1 解析 | Wild Hunt</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="https://wildhunting.github.io/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="https://wildhunting.github.io/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/base16/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/dart.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="https://wildhunting.github.io/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="https://wildhunting.github.io/js/fontawesome.min.9fbc9c15245c47e03715929a5c60e1ad2dec816b6a6f0c03c094628910b47365247a1ddcef40ea8bf54f4e73d0d6bf48.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://wildhunting.github.io/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://wildhunting.github.io/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="6.824 lab1解析">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Posts",
+      "item":"https://wildhunting.github.io/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"6.824 lab1 解析",
+      "item":"https://wildhunting.github.io/posts/6.824/6.824-lab1/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://wildhunting.github.io/posts/6.824/6.824-lab1/"
+    },
+    "headline": "6.824 lab1 解析 | Wild Hunt","datePublished": "2023-04-14T18:43:35+08:00",
+    "dateModified": "2023-04-14T18:43:35+08:00",
+    "wordCount":  1060 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "WANG Chucheng",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://wildhunting.github.io/images/icon.png"
+        }
+        },
+    "description": "6.824 lab1解析"
+}
+</script><meta property="og:title" content="6.824 lab1 解析 | Wild Hunt" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="https://wildhunting.github.io/images/icon.png">
+
+
+<meta property="og:url" content="https://wildhunting.github.io/posts/6.824/6.824-lab1/" />
+
+
+
+<meta property="og:description" content="6.824 lab1解析" />
+
+
+
+<meta property="og:locale" content="en" />
+
+
+
+
+<meta property="og:site_name" content="Wild Hunt" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2023-04-14T18:43:35&#43;08:00" />
+
+
+<meta property="article:modified_time" content="2023-04-14T18:43:35&#43;08:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="mit 6.824" />
+
+
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">Wild Hunt</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">About</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">Posts</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">Categories</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">Tags</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">Auto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">6.824 lab1 解析</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2023-04-14</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>5 min read</span>
+  </div>
+
+  
+    <div class="me-6 my-2">
+      <i class="fas fa-folder me-1"></i>
+      
+        <a href="https://wildhunting.github.io/categories/mit-6.824/" class="hover:text-eureka"
+          >mit 6.824</a
+        >
+      
+    </div>
+  
+
+  
+</div>
+
+
+  
+  
+
+  <h1 id="6824-lab1-笔记">6.824 lab1 笔记</h1>
+<h2 id="1-阅读论文">1. 阅读论文</h2>
+<p>略</p>
+<h2 id="2-官网rules--hints">2. 官网rules &amp; hints</h2>
+<h3 id="21-rules">2.1 rules</h3>
+<ol>
+<li>map阶段每个worker应该把中间文件分成nReduce份，nReduce是reduce任务的数量</li>
+<li>worker完成reduce任务后生成文件名<strong>mr-out-X</strong></li>
+<li><strong>mr-out-X</strong>文件每行应该是 <strong>&quot;%v %v&quot;<strong>格式，参考</strong>main/mrsequential.go</strong></li>
+<li>worker处理完map任务，应该把生成的中间文件放到当前目录中，便于worker执行reduce任务时读取中间文件</li>
+<li>当所有任务完成时，<strong>Done()<strong>函数应该返回true，使得</strong>coordinator</strong>退出</li>
+<li>所有任务完成时，worker应该退出，方法是：
+<ol>
+<li>当worker调用rpc向coordinator请求任务时，连接不上coordinator，此时可以认为coordinator已经退出因为所有任务已经完成了</li>
+<li>当worker调用rpc向coordinator请求任务时，coordinator可以向其回复所有任务已经完成</li>
+</ol>
+</li>
+</ol>
+<h3 id="22-hints">2.2 hints</h3>
+<ol>
+<li>
+<p>刚开始可以修改<strong>mr/worker.go</strong>&rsquo;s <strong>Worker()<strong>向coordinator 发送一个RPC请求一个任务。然后修改coordinator回复一个文件名，代表空闲的map任务。然后worker根据文件名读取文件，调用</strong>wc.so-Map</strong>函数，调用Map函数可参考<strong>mrsequential.go</strong></p>
+</li>
+<li>
+<p>如果修改了 <strong>mr/</strong> 目录下任何文件，应该重新build MapReduce plugins，<strong>go build -buildmode=plugin ../mrapps/wc.go</strong></p>
+</li>
+<li>
+<p>worker处理完map任务后产生的中间文件命名格式<strong>mr-X-Y</strong>，x是map任务的编号，y是reduce任务编号。</p>
+<pre><code class="language-go">// 初始文件，通过命令行传入的，如
+// pg-being_ernest.txt pg-dorian_gray.txt pg-frankenstein.txt 
+// len(files) = 3 nReduce = 4
+// 中间文件  x：map任务的编号 y：reduce任务编号
+// mr-0-0 mr-1-0 mr-2-0
+// mr-0-1 mr-1-1 mr-2-1
+// mr-0-2 mr-1-2 mr-2-2
+// mr-0-3 mr-1-3 mr-2-3
+</code></pre>
+</li>
+<li>
+<p>map任务存储数据到文件可以使用json格式，便于reduce任务读取</p>
+<pre><code class="language-go">  // map
+  enc := json.NewEncoder(file)
+  for _, kv := ... {
+    err := enc.Encode(&amp;kv)
+
+  // reduce
+  dec := json.NewDecoder(file)
+  for {
+    var kv KeyValue
+    if err := dec.Decode(&amp;kv); err != nil {
+      break
+    }
+    kva = append(kva, kv)
+  }
+</code></pre>
+</li>
+<li>
+<p>map阶段使用<strong>ihash(key)<strong>函数把key映射到哪个reduce任务，如某个worker取得了2号map任务，<strong>ihash(&ldquo;apple&rdquo;) = 1</strong>，那么就应该把该key放到</strong>mr-2-1</strong>文件中</p>
+</li>
+<li>
+<p>可以参考<strong>mrsequential.go</strong>代码：读取初始输入文件、排序key、存储reduce输出文件</p>
+</li>
+<li>
+<p>coordinator是rpc server，将会被并发访问，需要对共享变量加锁</p>
+</li>
+<li>
+<p>若当前未有空闲的map任务可以分配，worker应该等待一段时间再请求任务，若worker频繁请求任务，coordinator就会频繁加锁、访问数据、释放锁，浪费资源和时间。如使用<strong>time.Sleep()</strong>，worker可以每隔一秒发送一次请求任务rpc</p>
+</li>
+<li>
+<p>coordinator无法辨别某个worker是否crash，有可能某个worker还在运行，但是运行极其慢（由于硬件损坏等原因），最好的办法是：coordinator监控某个任务，若该任务未在规定时间内由worker报告完成，那么coordinator可以把该任务重新分配给其他worker，该lab规定超时时间是10s</p>
+</li>
+<li>
+<p>为了确保某个worker在写入文件时，不会有其他worker同时写入；又或者是某个worker写入文件时中途退出了，只写了部分数据，不能让这个没写完的文件让其他worker看到。可以使用临时文件<strong>ioutil.TempFile</strong>，当写入全部完成时，再使用原子重命名<strong>os.Rename</strong>。</p>
+</li>
+<li>
+<p>Go RPC只能传struct中大写字母开头的变量</p>
+</li>
+<li>
+<p>调用RPC <strong>call()</strong> 函数时，reply struct应该为空，不然会报错</p>
+<pre><code class="language-go">  reply := SomeType{}
+  call(..., &amp;reply)
+</code></pre>
+</li>
+</ol>
+<h2 id="3-架构设计">3. 架构设计</h2>
+<p><img src="https://i.niupic.com/images/2023/04/14/alqD.png" alt=""></p>
+<h3 id="31-rpc设计">3.1 RPC设计</h3>
+<p>在该lab中，我们需要两个RPC，一个是<strong>callTask RPC</strong>向coordinator请求一个任务，一个是<strong>callTaskDone RPC</strong>向coordinator报告某个任务的完成，以下皆在<strong>rpc.go</strong>中定义</p>
+<ol>
+<li>
+<p>首先定义一个枚举变量，表示coordinator给worker分配的任务类型，也可用来表示coordinator当前的phase</p>
+<pre><code class="language-go">type taskType int
+
+const (
+    // map任务
+	mapType taskType = iota
+    // reduce任务
+	reduceType
+    // 当前没有空闲任务，请等待
+    waitting
+    // 已经完成全部任务，可以退出了
+	done
+)
+</code></pre>
+</li>
+<li>
+<p>定义拉取任务RPC的args和reply struct</p>
+<p><strong>CallTaskArgs</strong>中不需要包含变量，只需要让coordinator知道该worker正在请求一个任务，coordinator会随机选择空闲任务进行分配填入<strong>CallTaskReply</strong>中</p>
+<p><strong>CallTaskReply</strong>包含以下变量：</p>
+<ul>
+<li><strong>FileName</strong>：map阶段，worker需要知道具体的文件名才能解析该文件</li>
+<li><strong>tp</strong>：指示该任务的具体类型</li>
+<li><strong>TaskID</strong>：worker将该变量放入<strong>CallTaskDoneArgs</strong>中，coordinator可以迅速定位Task[TaskID]，并且在reduce阶段中，搭配<strong>nFiles</strong>变量，worker读取<strong>mr-0-TaskID</strong>、<strong>mr-1-TaskID</strong>&hellip;.<strong>mr-nFiles-1-TaskID</strong>文件</li>
+<li><strong>nFiles</strong>：初始文件的数量，用于搭配<strong>TaskID</strong>，在上面已介绍</li>
+<li><strong>nReduce</strong>：用于map阶段，<strong>ihash(key) % nReduce</strong></li>
+</ul>
+<pre><code class="language-go">type CallTaskArgs struct {
+}
+type CallTaskReply struct {
+	FileName string
+	TaskID   int
+	tp       taskType
+	nFiles   int
+	nReduce  int
+}
+</code></pre>
+</li>
+<li>
+<p>定义报告任务完成RPC的args和reply struct</p>
+<p><strong>TaskID</strong>变量作用在 <strong>CallTaskReply: TaskID</strong>中提及</p>
+<p><strong>tp</strong>的作用是用于coordinator判断该RPC是否是合法的，举例：worker-1成功请求到map-1任务，但是因为worker-1节点硬件问题处理缓慢而导致coordinator检测到该map-1任务超时，于是把map-1任务分配给了worker-2。等到某个时间点，已经完成所有map任务，coordinator进入到了reduce阶段，但此时worker-1节点才刚运行完map-1任务并报告给coordinator，coordinator检测到当前是reduce阶段，但收到报告完成的rpc是map类型，不会对其进行任何操作。</p>
+<pre><code class="language-go">type CallTaskDoneArgs struct {
+	TaskID int
+	tp     taskType
+}
+type CallTaskDoneReply struct {
+}
+</code></pre>
+</li>
+</ol>
+<h3 id="32-coordinator">3.2 Coordinator</h3>
+<h4 id="321-结构体设计">3.2.1 结构体设计</h4>
+<pre><code class="language-go">type taskState int
+
+const (
+	spare taskState = iota
+	executing
+	finish
+)
+
+type task struct {
+	fileName string
+	id       int
+	state    taskState
+	start    time.Time
+}
+</code></pre>
+<p>首先设计一个task struct，该结构体代表一个任务</p>
+<ul>
+<li><strong>filename</strong>：在map阶段，用于coordinator告知worker要读取的初始文件</li>
+<li><strong>id</strong>： 该任务的id，传给worker，作用在RPC设计中提及</li>
+<li><strong>state</strong>：任务有三个状态：空闲、执行中、已完成。若空闲则可以分配给worker；若执行中，则监视该任务是否超时</li>
+<li><strong>start</strong>：任务刚开始执行的时间</li>
+</ul>
+<pre><code class="language-go">type Coordinator struct {
+	// Your definitions here.
+	mu         sync.Mutex
+	state      taskType
+	tasks      []*task
+	mapChan    chan *task
+	reduceChan chan *task
+	nReduce    int
+	nFiles     int
+	finished   int
+}
+</code></pre>
+<p>接着设计主要Coordinator结构体</p>
+<ul>
+<li><strong>state</strong>：当前系统的状态，map阶段（分配map任务）、reduce阶段（分配reduce任务）、全部完成done（可以结束系统运行）</li>
+<li><strong>tasks</strong>： *task的切片，维护了一组任务</li>
+<li><strong>mapChan</strong>、<strong>reduceChan</strong>：用于分发map、reduce任务的channel。map阶段，若有空闲map任务，则放至channel中，当有worker请求任务时，则可取出来。reduce阶段同理</li>
+<li><strong>finished</strong>：当前已完成任务的数量。map阶段，若<strong>finished == nFiles</strong>，则表示所有map任务完成，可以进入reduce阶段。reduce阶段同理，进入done</li>
+</ul>
+<h4 id="322-初始化">3.2.2 初始化</h4>
+<pre><code class="language-go">func MakeCoordinator(files []string, nReduce int) *Coordinator {
+	c := Coordinator{}
+
+	// Your code here.
+	c.mapPhase(files, nReduce)
+	go c.watch()
+	c.server()
+	return &amp;c
+}
+
+func (c *Coordinator) mapPhase(files []string, nReduce int) {
+	c.state = mapType                 //设置系统状态为map阶段
+	c.nReduce = nReduce        
+	c.nFiles = len(files)
+	c.tasks = make([]*task, c.nFiles)
+	c.mapChan = make(chan *task, c.nFiles) // c.nFiles长度的map channel
+	for i := 0; i &lt; c.nFiles; i++ {
+		c.tasks[i] = &amp;task{fileName: files[i], id: i}
+		c.mapChan &lt;- c.tasks[i]            // 刚开始所有任务都是空闲状态，放入channel中
+	}
+}
+</code></pre>
+<p>系统刚开始时即map阶段，<strong>mapPhase</strong>初始化Coordinator结构体。然后启动<strong>c.watch()</strong> 协程，用于监视任务是否超时，放后面讲</p>
+<h4 id="323-分配任务">3.2.3 分配任务</h4>
+<pre><code class="language-go">func (c *Coordinator) CallTask(args *CallTaskArgs, reply *CallTaskReply) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.state == done {
+		reply.Tp = done
+	} else if c.state == mapType {
+		switch len(c.mapChan) &gt; 0 {
+		case true:
+			task := &lt;-c.mapChan
+			c.setReply(task, reply)
+		case false:
+			reply.Tp = waitting
+		}
+	} else {
+		switch len(c.reduceChan) &gt; 0 {
+		case true:
+			task := &lt;-c.reduceChan
+			c.setReply(task, reply)
+		case false:
+			reply.Tp = waitting
+		}
+	}
+	return nil
+}
+
+func (c *Coordinator) setReply(t *task, reply *CallTaskReply) {
+	if t.state == finish {
+		reply.Tp = waitting
+		return
+	}
+	reply.Tp = c.state
+	reply.TaskID = t.id
+	reply.NReduce = c.nReduce
+	reply.NFiles = c.nFiles
+	reply.FileName = t.fileName
+	t.state = executing
+	t.start = time.Now()
+}
+</code></pre>
+<p>分配任务的主要函数，worker处会调用<strong>call(&ldquo;Coordinator.CallTask&rdquo;, &amp;args, &amp;reply)</strong>。</p>
+<ol>
+<li>若当前系统状态为done，则返回done，告知worker可以退出了</li>
+<li>若当前系统状态为map阶段：如果当前有任务可以分配<strong>len(c.mapChan) &gt; 0</strong>，则取出一个task，调用<strong>c.setReply(task, reply)</strong>，将任务的相关信息填入reply中，并把task的当前状态设为执行中，开始时间设为<strong>time.Now()</strong>。如果没有可分配的任务，则设<strong>reply.Tp = waitting</strong>，让worker等待一会再请求任务</li>
+<li>若当前系统状态为reduce阶段：同上</li>
+</ol>
+<h4 id="324-任务完成">3.2.4 任务完成</h4>
+<pre><code class="language-go">func (c *Coordinator) CallTaskDone(args *CallTaskDoneArgs, reply *CallTaskDoneReply) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	if c.state != args.Tp || c.state == done {
+		return nil
+	}
+	if c.tasks[args.TaskID].state != finish {
+		c.tasks[args.TaskID].state = finish
+		c.finished++
+		//fmt.Printf(&quot;task %v done\n&quot;, args.TaskID)
+		if c.state == mapType &amp;&amp; c.finished == c.nFiles {
+			c.reducePhase()
+		} else if c.state == reduceType &amp;&amp; c.finished == c.nReduce {
+			close(c.reduceChan)
+			c.state = done
+		}
+	}
+	return nil
+}
+
+func (c *Coordinator) reducePhase() {
+	//fmt.Printf(&quot;reduce phase\n&quot;)
+	close(c.mapChan)
+	c.state = reduceType
+	c.tasks = make([]*task, c.nReduce)
+	c.finished = 0
+	c.reduceChan = make(chan *task, c.nReduce)
+	for i := 0; i &lt; c.nReduce; i++ {
+		c.tasks[i] = &amp;task{id: i}
+		c.reduceChan &lt;- c.tasks[i]
+	}
+}
+</code></pre>
+<p>worker处会调用<strong>call(&ldquo;Coordinator.CallTaskDone&rdquo;, &amp;args, &amp;reply)</strong> 来报告某任务的完成</p>
+<p>首先判断<strong>c.state != args.Tp</strong>，即报告完成的任务类型和当前系统状态不匹配，可能发生在该情况：work-1请求了map-1任务，但是work-1运行太缓慢导致Coordinator监测到map-1任务超时，于是把map-1任务分配给了work-2。当所有map任务完成时，Coordinator进入了reduce阶段，这时work-1才报告map-1任务完成，与当前系统状态不匹配，故会直接返回</p>
+<p>若该任务未完成，则将该任务标记未已完成，<strong>c.finished++</strong>。</p>
+<ol>
+<li>如果当前为map阶段并且所有map任务已完成<strong>c.state == mapType &amp;&amp; c.finished == c.nFiles</strong>，则进入reduce阶段：
+<ol>
+<li>关闭map channel</li>
+<li>将系统状态设为reduce</li>
+<li>重置c.tasks为一系列reduce任务</li>
+<li>创建长度为c.nReduce的reduce channel</li>
+<li>放入任务</li>
+</ol>
+</li>
+<li>如果当前为reduce阶段并且所有map任务已完成<strong>c.state == reduceType &amp;&amp; c.finished == c.nReduce</strong>，则进入done阶段：
+<ol>
+<li>关闭reduce channel</li>
+<li>将系统状态设为done</li>
+</ol>
+</li>
+</ol>
+<h4 id="325-监测超时任务goroutine">3.2.5 监测超时任务goroutine</h4>
+<pre><code class="language-go">func (c *Coordinator) watch() {
+	for {
+		time.Sleep(time.Second)
+		c.mu.Lock()
+		if c.state == done {
+			return
+		}
+		for _, task := range c.tasks {
+			if task.state == executing &amp;&amp; time.Since(task.start) &gt; timeout {
+				task.state = spare
+				switch c.state {
+				case mapType:
+					c.mapChan &lt;- task
+				case reduceType:
+					c.reduceChan &lt;- task
+				}
+			}
+		}
+		c.mu.Unlock()
+	}
+}
+</code></pre>
+<p>如果当前系统状态为done了，可以退出协程了</p>
+<p>循环任务列表，如果该任务状态是正在执行但是超时了<strong>time.Since(task.start) &gt; timeout</strong>（time.Since可以计算系统当前时间距离start过去了多少时间），将该任务状态重置为空闲状态，并且根据系统当前状态，把该任务重新放入对应的channel中</p>
+<h3 id="33-worker">3.3 Worker</h3>
+<h4 id="331-主流程">3.3.1 主流程</h4>
+<pre><code class="language-go">func Worker(mapf func(string, string) []KeyValue,
+	reducef func(string, []string) string) {
+
+	for {
+		args := CallTaskArgs{}
+		reply := CallTaskReply{}
+		ok := call(&quot;Coordinator.CallTask&quot;, &amp;args, &amp;reply)
+		//now := time.Now()
+		if ok {
+			switch reply.Tp {
+			case mapType:
+				executeMap(reply.FileName, reply.NReduce, reply.TaskID, mapf)
+			case reduceType:
+				executeReduce(reply.NFiles, reply.TaskID, reducef)
+			case waitting:
+				time.Sleep(time.Second * 2)
+				continue
+			case done:
+				os.Exit(0)
+			}
+		} else {
+			time.Sleep(time.Second * 2)
+			continue
+		}
+		//fmt.Printf(&quot;finish task: %v %v use %v\n&quot;, reply.TaskID, rs(reply.Tp), time.Since(now).Seconds())
+		a := CallTaskDoneArgs{reply.TaskID, reply.Tp}
+		r := CallTaskDoneReply{}
+		call(&quot;Coordinator.CallTaskDone&quot;, &amp;a, &amp;r)
+		time.Sleep(time.Second * 2)
+	}
+}
+</code></pre>
+<p>首先向Coordinator发送请求任务rpc：</p>
+<ol>
+<li>map任务：执行</li>
+<li>reduce任务：执行</li>
+<li>waitting：当前Coordinator没有空闲任务，sleep一段时间再请求</li>
+<li>done：所有任务已完成，退出</li>
+</ol>
+<p>任务执行完成后，报告任务完成</p>
+<h4 id="332-执行map任务">3.3.2 执行map任务</h4>
+<pre><code class="language-go">func executeMap(fileName string, nReduce, taskID int, mapf func(string, string) []KeyValue) {
+	file, err := os.Open(fileName)
+	if err != nil {
+		log.Fatalf(&quot;cannot open %v&quot;, fileName)
+	}
+	content, err := ioutil.ReadAll(file)
+	if err != nil {
+		log.Fatalf(&quot;cannot read %v&quot;, fileName)
+	}
+	file.Close()
+	kva := mapf(fileName, string(content))
+    // 上面的代码参考mrsequential.go
+	files := []*os.File{}
+	tmpFileNames := []string{}
+	encoders := []*json.Encoder{}
+	for i := 0; i &lt; nReduce; i++ {
+		tempFile, err := ioutil.TempFile(&quot;./&quot;, &quot;&quot;)
+		if err != nil {
+			log.Fatalf(&quot;cannot open temp file&quot;)
+		}
+		files = append(files, tempFile)
+		tmpFileNames = append(tmpFileNames, tempFile.Name())
+		encoders = append(encoders, json.NewEncoder(tempFile))
+	}
+	for _, kv := range kva {
+		n := ihash(kv.Key) % nReduce
+		encoders[n].Encode(kv)
+	}
+	for i := 0; i &lt; nReduce; i++ {
+		files[i].Close()
+		os.Rename(tmpFileNames[i], &quot;./&quot;+intermediateFileName(taskID, i))
+	}
+}
+</code></pre>
+<p>在当前目录创建nReduce个临时文件<strong>ioutil.TempFile(&quot;./&quot;, &ldquo;&rdquo;)</strong>，使用该临时文件创建<strong>json.Encoder</strong>（在hints第四条），使用<strong>ihash</strong>函数把每个key映射到哪个文件，写入json格式，然后对每个临时文件重命名为<strong>mr-x-y</strong>格式</p>
+<p>生成中间文件名函数：</p>
+<pre><code class="language-go">func intermediateFileName(x, y int) string {
+	return fmt.Sprintf(&quot;mr-%v-%v&quot;, x, y)
+}
+</code></pre>
+<h4 id="333-执行reduce">3.3.3 执行reduce</h4>
+<pre><code class="language-go">func executeReduce(nFiles, taskID int, reducef func(string, []string) string) {
+	kvs := []KeyValue{}
+	for i := 0; i &lt; nFiles; i++ {
+		filename := intermediateFileName(i, taskID)
+        // 读取每个中间文件
+		file, err := os.Open(filename)
+		if err != nil {
+			log.Fatalf(&quot;cannot open %v&quot;, filename)
+		}
+        // 参考hints第四条，从文件中取出json格式的每条数据
+		decoder := json.NewDecoder(file)
+		for {
+			var kv KeyValue
+            // 已读到文件末尾
+			if err := decoder.Decode(&amp;kv); err != nil {
+				break
+			}
+			kvs = append(kvs, kv)
+		}
+		file.Close()
+	}
+    // 参考mrsequential.go
+	oname := fmt.Sprintf(&quot;mr-out-%v&quot;, taskID)
+	tempFile, _ := ioutil.TempFile(&quot;./&quot;, &quot;&quot;)
+	tempFileName := tempFile.Name()
+	sort.Sort(ByKey(kvs))
+	for i := 0; i &lt; len(kvs); {
+		j := i + 1
+		for j &lt; len(kvs) &amp;&amp; kvs[j].Key == kvs[i].Key {
+			j++
+		}
+		values := []string{}
+		for k := i; k &lt; j; k++ {
+			values = append(values, kvs[k].Value)
+		}
+		output := reducef(kvs[i].Key, values)
+		fmt.Fprintf(tempFile, &quot;%v %v\n&quot;, kvs[i].Key, output)
+		i = j
+	}
+	tempFile.Close()
+	os.Rename(tempFileName, &quot;./&quot;+oname)
+}
+</code></pre>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="https://wildhunting.github.io/tags/mit-6.824/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#mit 6.824</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >Previous</span
+        >
+        <a href="https://wildhunting.github.io/posts/etcd/wal-method/" class="block">WAL Method</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+        <span class="text-primary-text block font-bold">Next</span>
+        <a href="https://wildhunting.github.io/posts/etcd/raft-leader-election/" class="block">ETCD RAFT选举源码解析</a>
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+    </div>
+    
+      <div class="col-span-2">
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>On This Page</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-阅读论文">1. 阅读论文</a></li>
+    <li><a href="#2-官网rules--hints">2. 官网rules &amp; hints</a>
+      <ul>
+        <li><a href="#21-rules">2.1 rules</a></li>
+        <li><a href="#22-hints">2.2 hints</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-架构设计">3. 架构设计</a>
+      <ul>
+        <li><a href="#31-rpc设计">3.1 RPC设计</a></li>
+        <li><a href="#32-coordinator">3.2 Coordinator</a>
+          <ul>
+            <li><a href="#321-结构体设计">3.2.1 结构体设计</a></li>
+            <li><a href="#322-初始化">3.2.2 初始化</a></li>
+            <li><a href="#323-分配任务">3.2.3 分配任务</a></li>
+            <li><a href="#324-任务完成">3.2.4 任务完成</a></li>
+            <li><a href="#325-监测超时任务goroutine">3.2.5 监测超时任务goroutine</a></li>
+          </ul>
+        </li>
+        <li><a href="#33-worker">3.3 Worker</a>
+          <ul>
+            <li><a href="#331-主流程">3.3.1 主流程</a></li>
+            <li><a href="#332-执行map任务">3.3.2 执行map任务</a></li>
+            <li><a href="#333-执行reduce">3.3.3 执行reduce</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text"> Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>

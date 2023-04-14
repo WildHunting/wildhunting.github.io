@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html
+  lang="en"
+  dir="ltr"
+  
+><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<title>ETCD RAFT选举源码解析 | Wild Hunt</title>
+
+<meta name="generator" content="Hugo Eureka 0.9.3" />
+<link rel="stylesheet" href="https://wildhunting.github.io/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
+<script defer src="https://wildhunting.github.io/js/eureka.min.fa9a6bf6d7a50bb635b4cca7d2ba5cf3dfb095ae3798773f1328f7950028b48c17d06276594e1b5f244a25a6c969a705.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload"
+  href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&amp;family=Noto&#43;Serif&#43;SC:wght@400;600;700&amp;display=swap"
+  as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/styles/base16/solarized-light.min.css"
+   media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/highlight.min.js"
+   crossorigin></script>
+  <script defer src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.4.0/build/languages/dart.min.js"
+     crossorigin></script>
+<link rel="stylesheet" href="https://wildhunting.github.io/css/highlightjs.min.2958991528e43eb6fc9b8c4f2b8e052f79c4010718e1d1e888a777620e9ee63021c2c57ec7417a3108019bb8c41943e6.css" media="print" onload="this.media='all';this.onload=null">
+
+
+<script defer type="text/javascript" src="https://wildhunting.github.io/js/fontawesome.min.9fbc9c15245c47e03715929a5c60e1ad2dec816b6a6f0c03c094628910b47365247a1ddcef40ea8bf54f4e73d0d6bf48.js"></script>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css"
+   integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ"  media="print"
+  onload="this.media='all';this.onload=null" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js" 
+  integrity="sha384-VQ8d8WVFw0yHhCk5E8I86oOhv48xLpnDZx5T9GogA/Y84DcCKWXDmSDfn13bzFZY"  crossorigin></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js"
+   integrity="sha384-&#43;XBljXPPiv&#43;OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR"  crossorigin></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    renderMathInElement(document.body, {
+      delimiters: [
+        { left: "$$", right: "$$", display: true },
+        { left: "$", right: "$", display: false },
+        { left: "\\(", right: "\\)", display: false },
+        { left: "\\[", right: "\\]", display: true }
+      ],
+    });
+  });
+</script>
+
+
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@8.14.0/dist/mermaid.min.js" 
+  integrity="sha384-atOyb0FxAgN9LyAc6PEf9BjgwLISyansgdH8/VXQH8p2o5vfrRgmGIJ2Sg22L0A0"  crossorigin></script>
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="https://wildhunting.github.io/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_32x32_fill_box_center_3.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://wildhunting.github.io/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
+
+<meta name="description"
+  content="ETCD RAFT选举源码解析">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+      "@type": "ListItem",
+      "position": 1 ,
+      "name":"Posts",
+      "item":"https://wildhunting.github.io/posts/"},{
+      "@type": "ListItem",
+      "position": 2 ,
+      "name":"ETCD RAFT选举源码解析",
+      "item":"https://wildhunting.github.io/posts/etcd/raft-leader-election/"}]
+}
+</script>
+
+
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://wildhunting.github.io/posts/etcd/raft-leader-election/"
+    },
+    "headline": "ETCD RAFT选举源码解析 | Wild Hunt","datePublished": "2023-04-12T21:45:37+08:00",
+    "dateModified": "2023-04-12T21:45:37+08:00",
+    "wordCount":  1721 ,
+    "publisher": {
+        "@type": "Person",
+        "name": "WANG Chucheng",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://wildhunting.github.io/images/icon.png"
+        }
+        },
+    "description": "ETCD RAFT选举源码解析"
+}
+</script><meta property="og:title" content="ETCD RAFT选举源码解析 | Wild Hunt" />
+<meta property="og:type" content="article" />
+
+
+<meta property="og:image" content="https://wildhunting.github.io/images/icon.png">
+
+
+<meta property="og:url" content="https://wildhunting.github.io/posts/etcd/raft-leader-election/" />
+
+
+
+<meta property="og:description" content="ETCD RAFT选举源码解析" />
+
+
+
+<meta property="og:locale" content="en" />
+
+
+
+
+<meta property="og:site_name" content="Wild Hunt" />
+
+
+
+
+
+
+<meta property="article:published_time" content="2023-04-12T21:45:37&#43;08:00" />
+
+
+<meta property="article:modified_time" content="2023-04-12T21:45:37&#43;08:00" />
+
+
+
+<meta property="article:section" content="posts" />
+
+
+<meta property="article:tag" content="etcd" />
+
+<meta property="article:tag" content="raft" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <body class="flex min-h-screen flex-col">
+    <header
+      class="min-h-16 pl-scrollbar bg-secondary-bg fixed z-50 flex w-full items-center shadow-sm"
+    >
+      <div class="mx-auto w-full max-w-screen-xl"><script>
+    let storageColorScheme = localStorage.getItem("lightDarkMode")
+    if (((storageColorScheme == 'Auto' || storageColorScheme == null) && window.matchMedia("(prefers-color-scheme: dark)").matches) || storageColorScheme == "Dark") {
+        document.getElementsByTagName('html')[0].classList.add('dark')
+    }
+</script>
+<nav class="flex items-center justify-between flex-wrap px-4 py-4 md:py-0">
+    <a href="/" class="me-6 text-primary-text text-xl font-bold">Wild Hunt</a>
+    <button id="navbar-btn" class="md:hidden flex items-center px-3 py-2" aria-label="Open Navbar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div id="target"
+        class="hidden block md:flex md:grow md:justify-between md:items-center w-full md:w-auto text-primary-text z-20">
+        <div class="md:flex md:h-16 text-sm md:grow pb-4 md:pb-0 border-b md:border-b-0">
+            <a href="/#about" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">About</a>
+            <a href="/posts/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  selected-menu-item  me-4">Posts</a>
+            <a href="/categories/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">Categories</a>
+            <a href="/tags/" class="block mt-4 md:inline-block md:mt-0 md:h-(16-4px) md:leading-(16-4px) box-border md:border-t-2 md:border-b-2  border-transparent  me-4">Tags</a>
+        </div>
+
+        <div class="flex">
+            <div class="relative pt-4 md:pt-0">
+                <div class="cursor-pointer hover:text-eureka" id="lightDarkMode">
+                    <i class="fas fa-adjust"></i>
+                </div>
+                <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-30" id="is-open">
+                </div>
+                <div class="absolute flex flex-col start-0 md:start-auto end-auto md:end-0 hidden bg-secondary-bg w-48 rounded py-2 border border-tertiary-bg cursor-pointer z-40"
+                    id='lightDarkOptions'>
+                    <span class="px-4 py-1 hover:text-eureka" name="Light">Light</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Dark">Dark</span>
+                    <span class="px-4 py-1 hover:text-eureka" name="Auto">Auto</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed hidden inset-0 opacity-0 h-full w-full cursor-default z-0" id="is-open-mobile">
+    </div>
+
+</nav>
+<script>
+    
+    let element = document.getElementById('lightDarkMode')
+    if (storageColorScheme == null || storageColorScheme == 'Auto') {
+        document.addEventListener('DOMContentLoaded', () => {
+            window.matchMedia("(prefers-color-scheme: dark)").addEventListener('change', switchDarkMode)
+        })
+    } else if (storageColorScheme == "Light") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'sun')
+        element.firstElementChild.classList.add('fa-sun')
+    } else if (storageColorScheme == "Dark") {
+        element.firstElementChild.classList.remove('fa-adjust')
+        element.firstElementChild.setAttribute("data-icon", 'moon')
+        element.firstElementChild.classList.add('fa-moon')
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        getcolorscheme();
+        switchBurger();
+    });
+</script>
+</div>
+    </header>
+    <main class="grow pt-16">
+        <div class="pl-scrollbar">
+          <div class="mx-auto w-full max-w-screen-xl lg:px-4 xl:px-8">
+  
+  
+  <div class="grid grid-cols-2 gap-4 lg:grid-cols-8 lg:pt-12">
+    <div
+      class=" bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
+    >
+      <article class="prose">
+  <h1 class="mb-4">ETCD RAFT选举源码解析</h1>
+
+  <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2023-04-12</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>9 min read</span>
+  </div>
+
+  
+    <div class="me-6 my-2">
+      <i class="fas fa-folder me-1"></i>
+      
+        <a href="https://wildhunting.github.io/categories/etcd/" class="hover:text-eureka"
+          >etcd</a
+        >
+      
+    </div>
+  
+
+  
+    <div class="me-6 my-2">
+      <i class="fas fa-th-list me-1"></i>
+      
+        <a href="https://wildhunting.github.io/series/etcd%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="hover:text-eureka"
+          >etcd源码解析</a
+        >
+      
+    </div>
+  
+</div>
+
+
+  
+  
+
+  <h1 id="etcd-raft笔记">ETCD-raft笔记</h1>
+<h2 id="0-引言">0. 引言</h2>
+<p>该篇博客基于etcd v3.5.7版本，首先会简单介绍etcd/raft对Raft选举部分的算法优化，然后通过源码分析etcd/raft的选举实现。</p>
+<h2 id="1-etcd对于raft选举算法优化措施">1. etcd对于raft选举算法优化措施</h2>
+<p>该优化措施均在raft博士论文中有讲解</p>
+<p>etcd/raft实现的与选举有关的优化有<strong>Pre-Vote</strong>、<strong>Check Quorum</strong>、和<strong>Leader Lease</strong>。在这三种优化中，只有<strong>Pre-Vote</strong>和<strong>Leader Lease</strong>最初是对选举过程的优化，<strong>Check Quorum</strong>是为了更高效地实现线性一致性读（Linearizable Read）而做出的优化，但是由于<strong>Leader Lease</strong>需要依赖<strong>Check Quorum</strong>，因此也放在这讲。</p>
+<h3 id="11-pre-vote">1.1 Pre-Vote</h3>
+<p>如下图所示，当Raft集群的网络发生分区时，会出现节点数达不到quorum（达成共识至少需要的节点数）的分区，如图中的<em>Partition 1</em>。</p>
+<p><img src="http://blog.mrcroxx.com/posts/code-reading/etcdraft-made-simple/3-election/assets/partition.svg" alt="网络分区示意图"></p>
+<p>在节点数能够达到quorum的分区中，选举流程会正常进行，该分区中的所有节点的term最终会稳定为新选举出的leader节点的term。不幸的是，在节点数无法达到quorum的分区中，如果该分区中没有leader节点，因为节点总是无法收到数量达到quorum的投票而不会选举出新的leader，所以该分区中的节点在<em>election timeout</em>超时后，会增大term并发起下一轮选举，这导致该分区中的节点的term会不断增大。</p>
+<p>如果网络一直没有恢复，这是没有问题的。但是，如果网络分区恢复，此时，达不到quorum的分区中的节点的term值会远大于能够达到quorum的分区中的节点的term，这会导致能够达到quorum的分区的leader退位（step down）并增大自己的term到更大的term，使集群产生一轮不必要的选举。</p>
+<p><strong>Pre-Vote</strong>机制就是为了解决这一问题而设计的，其解决的思路在于不允许达不到quorum的分区正常进入投票流程，也就避免了其term号的增大。为此，<strong>Pre-Vote</strong>引入了“预投票”，也就是说，当节点<em>election timeout</em>超时时，它们不会立即增大自身的term并请求投票，而是先发起一轮预投票。收到预投票请求的节点不会退位。只有当节点收到了达到quorum的预投票响应时，节点才能增大自身term号并发起投票请求。这样，达不到quorum的分区中的节点永远无法增大term，也就不会在分区恢复后引起不必要的一轮投票。</p>
+<h3 id="12-check-quorum">1.2 Check Quorum</h3>
+<p>在Raft算法中，保证线性一致性读取的最简单的方式，就是讲读请求同样当做一条Raft提议，通过与其它日志相同的方式执行，因此这种方式也叫作<em>Log Read</em>。显然，<em>Log Read</em>的性能很差。而在很多系统中，读多写少的负载是很常见的场景。因此，为了提高读取的性能，就要试图绕过日志机制。</p>
+<p>但是，直接绕过日志机制从leader读取，可能会读到陈旧的数据，也就是说存在<em>stale read</em>的问题。在下图的场景中，假设网络分区前，<em>Node 5</em>是整个集群的leader。在网络发生分区后，<em>Partition 0</em>分区中选举出了新leader，也就是图中的<em>Node 1</em>。</p>
+<p><img src="http://blog.mrcroxx.com/posts/code-reading/etcdraft-made-simple/3-election/assets/stale-read.svg" alt="stale read示意图"></p>
+<p>但是，由于网络分区，<em>Node 5</em>无法收到<em>Partition 0</em>中节点的消息，<em>Node 5</em>不会意识到集群中出现了新的leader。此时，虽然它不能成功地完成日志提交，但是如果读取时绕过了日志，它还是能够提供读取服务的。这会导致连接到<em>Node 5</em>的client读取到陈旧的数据。</p>
+<p><strong>Check Quorum</strong>可以减轻这一问题带来的影响，其机制也非常简单：让leader每隔一段时间主动地检查follower是否活跃。如果活跃的follower数量达不到quorum，那么说明该leader可能是分区前的旧leader，所以此时该leader会主动退位转为follower。</p>
+<p>需要注意的是，<strong>Check Quorum</strong>并不能完全避免<em>stale read</em>的发生，只能减小其发生时间，降低影响。如果需要严格的线性一致性，需要通过其它机制实现。</p>
+<h3 id="13-leader-lease">1.3 Leader Lease</h3>
+<p>分布式系统中的网络环境十分复杂，有时可能出现网络不完全分区的情况，即整个整个网络拓补图是一个连通图，但是可能并非任意的两个节点都能互相访问。</p>
+<p><img src="http://blog.mrcroxx.com/posts/code-reading/etcdraft-made-simple/3-election/assets/partial-partition.svg" alt="不完全分区示意图"></p>
+<p>这种现象不止会出现在网络故障中，还会出现在成员变更中。在通过<strong>ConfChange</strong>移除节点时，不同节点应用该<strong>ConfChange</strong>的时间可能不同，这也可能导致这一现象发生——TODO （举个例子）。</p>
+<p>在上图的场景下，<em>Node 1</em>与<em>Node 2</em>之间无法通信。如果它们之间的通信中断前，<em>Node 1</em>是集群的leader，在通信中断后，<em>Node 2</em>无法再收到来自<em>Node 1</em>的心跳。因此，<em>Node 2</em>会开始选举。如果在<em>Node 2</em>发起选举前，<em>Node 1</em>和<em>Node 3</em>中都没有新的日志，那么<em>Node 2</em>仍可以收到能达到quorum的投票（来自<em>Node 2</em>本身的投票和来自<em>Node 3</em>的投票），并成为leader。</p>
+<p><strong>Leader Lease</strong>机制对投票引入了一条新的约束以解决这一问题：当节点在<em>election timeout</em>超时前，如果收到了leader的消息，那么它不会为其它发起投票或预投票请求的节点投票。也就是说，<strong>Leader Lease</strong>机制会阻止了正常工作的集群中的节点给其它节点投票。</p>
+<p><strong>Leader Lease</strong>需要依赖<strong>Check Quorum</strong>机制才能正常工作。接下来笔者通过一个例子说明其原因。</p>
+<p>假如在一个5个节点组成的Raft集群中，出现了下图中的分区情况：<em>Node 1</em>与<em>Node 2</em>互通，<em>Node 3</em>、<em>Node 4</em>、<em>Node 5</em>之间两两互通、<em>Node 5</em>与任一节点不通。在网络分区前，<em>Node 1</em>是集群的leader。</p>
+<p><img src="http://blog.mrcroxx.com/posts/code-reading/etcdraft-made-simple/3-election/assets/leader-lease-without-check-quorum.svg" alt="一种可能的网络分区示意图"></p>
+<p>在既没有<strong>Leader Lease</strong>也没有<strong>Check Quorum</strong>的情况下，<em>Node 3</em>、<em>Node 4</em>会因收不到leader的心跳而发起投票，因为<em>Node 2</em>、<em>Node 3</em>、<em>Node 4</em>互通，该分区节点数能达到quorum，因此它们可以选举出新的leader。</p>
+<p>而在使用了<strong>Leader Lease</strong>而不使用<strong>Check Quorum</strong>的情况下，由于<em>Node 2</em>仍能够收到原leader <em>Node 1</em>的心跳，受<strong>Leader Lease</strong>机制的约束，它不会为其它节点投票。这会导致即使整个集群中存在可用节点数达到quorum的分区，但是集群仍无法正常工作。</p>
+<p>而如果同时使用了<strong>Leader Lease</strong>和<strong>Check Quorum</strong>，那么在上图的情况下，<em>Node 1</em>会在<em>election timeout</em>超时后因检测不到数量达到quorum的活跃节点而退位为follower。这样，<em>Node 2</em>、<em>Node 3</em>、<em>Node 4</em>之间的选举可以正常进行。</p>
+<h3 id="14-引入的新问题与解决方案">1.4 引入的新问题与解决方案</h3>
+<p>引入<strong>Pre-Vote</strong>和<strong>Check Quorum</strong>（etcd/raft的实现中，开启<strong>Check Quorum</strong>会自动开启<strong>Leader Lease</strong>）会为Raft算法引入一些新的问题。</p>
+<p>当一个节点收到了term比自己低的消息时，原本的逻辑是直接忽略该消息，因为term比自己低的消息仅可能是因网络延迟的迟到的旧消息。然而，开启了这些机制后，在如下的场景中会出现问题：</p>
+<p><img src="http://blog.mrcroxx.com/posts/code-reading/etcdraft-made-simple/3-election/assets/check-quorum-leader-lease-bug.svg" alt="场景1示意图"></p>
+<p><strong>场景1：</strong> 如上图所示，在开启了<strong>Check Quorum / Leader Lease</strong>后（假设没有开启<strong>Pre-Vote</strong>，<strong>Pre-Vote</strong>的问题在下一场景中讨论），数量达不到quorum的分区中的leader会退位，且该分区中的节点永远都无法选举出leader，因此该分区的节点的term会不断增大。当该分区与整个集群的网络恢复后，由于开启了<strong>Check Quorum / Leader Lease</strong>，即使该分区中的节点有更大的term，由于原分区的节点工作正常，它们的选举请求会被丢弃。同时，由于该节点的term比原分区的leader节点的term大，因此它会丢弃原分区的leader的请求。这样，该节点永远都无法重新加入集群，也无法当选新leader。（详见<a href="https://github.com/etcd-io/etcd/pull/5451">issue #5451</a>、<a href="https://github.com/etcd-io/etcd/pull/5468">issue #5468</a>）。</p>
+<p><img src="http://blog.mrcroxx.com/posts/code-reading/etcdraft-made-simple/3-election/assets/pre-vote-bug.svg" alt="场景2示意图"></p>
+<p><strong>场景2：</strong> <strong>Pre-Vote</strong>机制也有类似的问题。如上图所示，假如发起预投票的节点，在预投票通过后正要发起正式投票的请求时出现网络分区。此时，该节点的term会高于原集群的term。而原集群因没有收到真正的投票请求，不会更新term，继续正常运行。在网络分区恢复后，原集群的term低于分区节点的term，但是日志比分区节点更新。此时，该节点发起的预投票请求因没有日志落后会被丢弃，而原集群leader发给该节点的请求会因term比该节点小而被丢弃。同样，该节点永远都无法重新加入集群，也无法当选新leader。（详见<a href="https://github.com/etcd-io/etcd/issues/8501">issue #8501</a>、<a href="https://github.com/etcd-io/etcd/pull/8525">issue #8525</a>）。</p>
+<p><strong>场景3：</strong> 在更复杂的情况中，比如，在变更配置时，开启了原本没有开启的<strong>Pre-Vote</strong>机制。此时可能会出现与上一条类似的情况，即可能因term更高但是log更旧的节点的存在导致整个集群的死锁，所有节点都无法预投票成功。这种情况比上一种情况更危险，上一种情况只有之前分区的节点无法加入集群，在这种情况下，整个集群都会不可用。（详见<a href="https://github.com/etcd-io/etcd/issues/8501">issue #8501</a>、<a href="https://github.com/etcd-io/etcd/pull/8525">issue #8525</a>）。</p>
+<p>为了解决以上问题，节点在收到term比自己低的请求时，需要做特殊的处理。处理逻辑也很简单：</p>
+<ol>
+<li>如果收到了term比当前节点term低的leader的消息，且集群开启了<strong>Check Quorum / Leader Lease</strong>或<strong>Pre-Vote</strong>，那么发送一条term为当前term的消息，令term低的节点成为follower。（针对<strong>场景1</strong>、<strong>场景2</strong>）</li>
+<li>对于term比当前节点term低的预投票请求，无论是否开启了<strong>Check Quorum / Leader Lease</strong>或<strong>Pre-Vote</strong>，都要通过一条term为当前term的消息，迫使其转为follower并更新term。（针对<strong>场景3</strong>）</li>
+</ol>
+<h2 id="2-etcd中raft选举的实现">2. etcd中Raft选举的实现</h2>
+<h3 id="21-发起vote或pre-vote流程">2.1 发起vote或pre-vote流程</h3>
+<h4 id="211-election-timeout">2.1.1 Election timeout</h4>
+<p>在集群刚启动时，所有节点的状态都为 <strong>follower</strong> ，等待超时触发 <strong>leader election</strong>。超时时间由 <strong>Config</strong> 设置。<strong>etcd/raft</strong> 没有用真实时间而是使用逻辑时钟，当调用 <strong>tick</strong> 的次数超过指定次数时触发超时事件。 对于 <strong>follower</strong> 和 <strong>candidate</strong> 而言，<strong>tick</strong> 中会判断是否超时，若超时则会本地生成一个 <strong>MsgHup</strong> 类型的消息触发 <strong>leader election</strong>:</p>
+<pre><code class="language-go">// tickElection is run by followers and candidates after r.electionTimeout.
+func (r *raft) tickElection() {
+	r.electionElapsed++
+
+	if r.promotable() &amp;&amp; r.pastElectionTimeout() {
+		r.electionElapsed = 0
+		r.Step(pb.Message{From: r.id, Type: pb.MsgHup})
+	}
+}
+</code></pre>
+<h4 id="212-msghup消息处理与hup方法">2.1.2 MsgHup消息处理与hup方法</h4>
+<p>etcd/raft通过<strong>raft</strong>结构体的<strong>Step</strong>方法实现Raft状态机的状态转移。<strong>Step</strong> 方法是消息处理的入口，不同 <strong>state</strong> 处理的消息不同且处理方式不同，所以有多个 <strong>step</strong> 方法:</p>
+<ul>
+<li><strong>raft.Step()</strong>: 消息处理的入口，做一些共性的检查，如 <strong>term</strong>，或处理所有状态都需要处理的消息。若需要更进一步处理，会根据状态 调用下面的方法:
+<ul>
+<li><strong>raft.stepLeader()</strong>: <strong>leader</strong> 状态的消息处理方法；</li>
+<li><strong>raft.stepFollower()</strong>: <strong>follower</strong> 状态的消息处理方法；</li>
+<li><strong>raft.stepCandidate()</strong>: <strong>candidate</strong> 状态的消息处理方法。</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-go">func (r *raft) Step(m pb.Message) error {
+	// ... ...
+	switch m.Type {
+	case pb.MsgHup:
+		if r.preVote {
+			r.hup(campaignPreElection)
+		} else {
+			r.hup(campaignElection)
+		}
+	// ... ...
+	}
+	// ... ...
+}
+</code></pre>
+<p><strong>Step</strong>方法在处理<strong>MsgHup</strong>消息时，会根据当前配置中是否开启了<strong>Pre-Vote</strong>机制，以不同的<strong>CampaignType</strong>调用<strong>hup</strong>方法。<strong>CampaignType</strong>是一种枚举类型（go语言的枚举实现方式），其可能值如下表所示。</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>campaignPreElection</strong></td>
+<td>表示<strong>Pre-Vote</strong>的预选举阶段。</td>
+</tr>
+<tr>
+<td><strong>campaignElection</strong></td>
+<td>表示正常的选举阶段（仅超时选举，不包括<strong>Leader Transfer</strong>）。</td>
+</tr>
+<tr>
+<td><strong>campaignTransfer</strong></td>
+<td>表示<strong>Leader Transfer</strong>阶段。</td>
+</tr>
+</tbody>
+</table>
+<p>接下来对<strong>hup</strong>的实现进行分析。</p>
+<pre><code class="language-go">func (r *raft) hup(t CampaignType) {
+	if r.state == StateLeader {
+		r.logger.Debugf(&quot;%x ignoring MsgHup because already leader&quot;, r.id)
+		return
+	}
+
+	if !r.promotable() {
+		r.logger.Warningf(&quot;%x is unpromotable and can not campaign&quot;, r.id)
+		return
+	}
+	ents, err := r.raftLog.slice(r.raftLog.applied+1, r.raftLog.committed+1, noLimit)
+	if err != nil {
+		r.logger.Panicf(&quot;unexpected error getting unapplied entries (%v)&quot;, err)
+	}
+	if n := numOfPendingConf(ents); n != 0 &amp;&amp; r.raftLog.committed &gt; r.raftLog.applied {
+		r.logger.Warningf(&quot;%x cannot campaign at term %d since there are still %d pending configuration changes to apply&quot;, r.id, r.Term, n)
+		return
+	}
+
+	r.logger.Infof(&quot;%x is starting a new election at term %d&quot;, r.id, r.Term)
+	r.campaign(t)
+}
+</code></pre>
+<pre><code class="language-go">// promotable indicates whether state machine can be promoted to leader,
+// which is true when its own id is in progress list.
+func (r *raft) promotable() bool {
+	pr := r.prs.Progress[r.id]
+	return pr != nil &amp;&amp; !pr.IsLearner &amp;&amp; !r.raftLog.hasPendingSnapshot()
+}
+</code></pre>
+<p>总结当节点出现以下情况时不能发起选举：</p>
+<ol>
+<li>节点被移出集群</li>
+<li>节点是learner</li>
+<li>节点还有未保存到稳定存储的snapshot</li>
+<li>节点有还未被应用的集群配置变更<strong>ConfChange</strong>消息</li>
+</ol>
+<h4 id="213-campaign">2.1.3 campaign</h4>
+<p>官方注释很详细了，因此不多废笔墨解释</p>
+<pre><code class="language-go">// campaign transitions the raft instance to candidate state. This must only be
+// called after verifying that this is a legitimate transition.
+func (r *raft) campaign(t CampaignType) {
+    // 因为调用campaign的方法不止有hup，campaign方法首先还是会检查promotable()是否为真。
+	if !r.promotable() {
+		// This path should not be hit (callers are supposed to check), but
+		// better safe than sorry.
+		r.logger.Warningf(&quot;%x is unpromotable; campaign() should have been called&quot;, r.id)
+	}
+	var term uint64
+	var voteMsg pb.MessageType
+	if t == campaignPreElection {
+		r.becomePreCandidate()
+		voteMsg = pb.MsgPreVote
+		// PreVote RPCs are sent for the next term before we've incremented r.Term.
+		term = r.Term + 1
+	} else {
+		r.becomeCandidate()
+		voteMsg = pb.MsgVote
+		term = r.Term
+	}
+	if _, _, res := r.poll(r.id, voteRespMsgType(voteMsg), true); res == quorum.VoteWon {
+		// We won the election after voting for ourselves (which must mean that
+		// this is a single-node cluster). Advance to the next state.
+		if t == campaignPreElection {
+			r.campaign(campaignElection)
+		} else {
+			r.becomeLeader()
+		}
+		return
+	}
+	var ids []uint64
+	{
+		//won't send requestVote to learners, beacause learners[] are not in incoming[] and outgoing[]
+		idMap := r.prs.Voters.IDs()
+		ids = make([]uint64, 0, len(idMap))
+		for id := range idMap {
+			ids = append(ids, id)
+		}
+		sort.Slice(ids, func(i, j int) bool { return ids[i] &lt; ids[j] })
+	}
+	for _, id := range ids {
+		if id == r.id {
+			continue
+		}
+		r.logger.Infof(&quot;%x [logterm: %d, index: %d] sent %s request to %x at term %d&quot;,
+			r.id, r.raftLog.lastTerm(), r.raftLog.lastIndex(), voteMsg, id, r.Term)
+
+		var ctx []byte
+		if t == campaignTransfer {
+			ctx = []byte(t)
+		}
+		r.send(pb.Message{Term: term, To: id, Type: voteMsg, Index: r.raftLog.lastIndex(), LogTerm: r.raftLog.lastTerm(), Context: ctx})
+	}
+}
+</code></pre>
+<p>至此，该节点已向其他节点发送MsgVote或MsgPreVote消息</p>
+<h3 id="22-节点收到vote或pre-vote消息处理流程">2.2 节点收到vote或pre-vote消息处理流程</h3>
+<p>处理vote或pre-vote消息都在<strong>Step</strong>方法内，不会进入各自的step方法，有效的<strong>MsgPreVote</strong>必须满足其中一个条件 <strong>（m.Term &gt; r.Term）</strong></p>
+<p>官方注释很详细，简单易理解，因此不多废笔墨解释</p>
+<pre><code class="language-go">func (r *raft) Step(m pb.Message) error {
+	// Handle the message term, which may result in our stepping down to a follower.
+	switch {
+	case m.Term == 0:
+		// local message
+	case m.Term &gt; r.Term:
+		if m.Type == pb.MsgVote || m.Type == pb.MsgPreVote {
+			force := bytes.Equal(m.Context, []byte(campaignTransfer))
+			inLease := r.checkQuorum &amp;&amp; r.lead != None &amp;&amp; r.electionElapsed &lt; r.electionTimeout
+			if !force &amp;&amp; inLease {
+				// If a server receives a RequestVote request within the minimum election timeout
+				// of hearing from a current leader, it does not update its term or grant its vote
+				return nil
+			}
+		}
+		switch {
+		case m.Type == pb.MsgPreVote:
+			// Never change our term in response to a PreVote
+		case m.Type == pb.MsgPreVoteResp &amp;&amp; !m.Reject:
+			// We send pre-vote requests with a term in our future. If the
+			// pre-vote is granted, we will increment our term when we get a
+			// quorum. If it is not, the term comes from the node that
+			// rejected our vote so we should become a follower at the new
+			// term.
+		default:
+			if m.Type == pb.MsgApp || m.Type == pb.MsgHeartbeat || m.Type == pb.MsgSnap {
+				r.becomeFollower(m.Term, m.From)
+			} else {
+				r.becomeFollower(m.Term, None)
+			}
+		}
+
+	case m.Term &lt; r.Term:
+        // ........
+	}
+
+	switch m.Type {
+	case pb.MsgHup:
+        // ........
+	case pb.MsgVote, pb.MsgPreVote:
+		// We can vote if this is a repeat of a vote we've already cast...
+		canVote := r.Vote == m.From ||
+			// ...we haven't voted and we don't think there's a leader yet in this term...
+			(r.Vote == None &amp;&amp; r.lead == None) ||
+			// ...or this is a PreVote for a future term...
+			(m.Type == pb.MsgPreVote &amp;&amp; m.Term &gt; r.Term)
+		// ...and we believe the candidate is up to date.
+		if canVote &amp;&amp; r.raftLog.isUpToDate(m.Index, m.LogTerm) {
+			// Note: it turns out that that learners must be allowed to cast votes.
+			// This seems counter- intuitive but is necessary in the situation in which
+			// a learner has been promoted (i.e. is now a voter) but has not learned
+			// about this yet.
+			// For example, consider a group in which id=1 is a learner and id=2 and
+			// id=3 are voters. A configuration change promoting 1 can be committed on
+			// the quorum **{2,3}** without the config change being appended to the
+			// learner's log. If the leader (say 2) fails, there are de facto two
+			// voters remaining. Only 3 can win an election (due to its log containing
+			// all committed entries), but to do so it will need 1 to vote. But 1
+			// considers itself a learner and will continue to do so until 3 has
+			// stepped up as leader, replicates the conf change to 1, and 1 applies it.
+			// Ultimately, by receiving a request to vote, the learner realizes that
+			// the candidate believes it to be a voter, and that it should act
+			// accordingly. The candidate's config may be stale, too; but in that case
+			// it won't win the election, at least in the absence of the bug discussed
+			// in:
+			// https://github.com/etcd-io/etcd/issues/7625#issuecomment-488798263.
+
+			// When responding to Msg{Pre,}Vote messages we include the term
+			// from the message, not the local term. To see why, consider the
+			// case where a single node was previously partitioned away and
+			// it's local term is now out of date. If we include the local term
+			// (recall that for pre-votes we don't update the local term), the
+			// (pre-)campaigning node on the other end will proceed to ignore
+			// the message (it ignores all out of date messages).
+			// The term in the original message and current local term are the
+			// same in the case of regular votes, but different for pre-votes.
+			r.send(pb.Message{To: m.From, Term: m.Term, Type: voteRespMsgType(m.Type)})
+			if m.Type == pb.MsgVote {
+				// Only record real votes.
+				r.electionElapsed = 0
+				r.Vote = m.From
+			}
+		} else {
+			r.send(pb.Message{To: m.From, Term: r.Term, Type: voteRespMsgType(m.Type), Reject: true})
+		}
+
+	default:
+        // ...........
+	}
+	return nil
+}
+</code></pre>
+<p>注意：节点同意投票消息带的是<strong>m.Term</strong>，拒绝投票消息是<strong>r.Term</strong>，如果拒接<strong>MsgPreVote</strong>消息，那么发送pre-vote消息的节点就变为</p>
+<p>在<strong>r.Term</strong>的<strong>follower</strong>，在2.3.1节内体现</p>
+<h3 id="23-节点收到处理msgprevoteresp或msgvoteresp消息流程">2.3 节点收到处理MsgPreVoteResp或MsgVoteResp消息流程</h3>
+<h4 id="231-step内处理">2.3.1 Step内处理</h4>
+<p>根据2.2节可以看到<strong>Step</strong>内有这样一段代码：在2.2节最后有解释，官方也给了详细注释</p>
+<pre><code class="language-go">		switch {
+		case m.Type == pb.MsgPreVote:
+			// Never change our term in response to a PreVote
+		case m.Type == pb.MsgPreVoteResp &amp;&amp; !m.Reject:
+			// We send pre-vote requests with a term in our future. If the
+			// pre-vote is granted, we will increment our term when we get a
+			// quorum. If it is not, the term comes from the node that
+			// rejected our vote so we should become a follower at the new
+			// term.
+		default:
+			if m.Type == pb.MsgApp || m.Type == pb.MsgHeartbeat || m.Type == pb.MsgSnap {
+				r.becomeFollower(m.Term, m.From)
+			} else {
+				r.becomeFollower(m.Term, None)
+			}
+		}
+</code></pre>
+<h4 id="232-stepcandidate内处理">2.3.2 stepCandidate内处理</h4>
+<pre><code class="language-go">	case myVoteRespType:
+		gr, rj, res := r.poll(m.From, m.Type, !m.Reject)
+		r.logger.Infof(&quot;%x has received %d %s votes and %d vote rejections&quot;, r.id, gr, m.Type, rj)
+		switch res {
+		case quorum.VoteWon:
+			if r.state == StatePreCandidate {
+				r.campaign(campaignElection)
+			} else {
+				r.becomeLeader()
+				r.bcastAppend()
+			}
+		case quorum.VoteLost:
+			// pb.MsgPreVoteResp contains future term of pre-candidate
+			// m.Term &gt; r.Term; reuse r.Term
+			r.becomeFollower(r.Term, None)
+		}
+</code></pre>
+<p>如果预投票成功，则发起新一轮正式投票。如果正式投票成功，则转为leader，接着后续操作</p>
+<h3 id="24-转变领导者身份">2.4 转变领导者身份</h3>
+<h4 id="241-becomeleader">2.4.1 becomeLeader()</h4>
+<pre><code class="language-go">func (r *raft) becomeLeader() {
+	// TODO(xiangli) remove the panic when the raft implementation is stable
+	if r.state == StateFollower {
+		panic(&quot;invalid transition [follower -&gt; leader]&quot;)
+	}
+	r.step = stepLeader
+	r.reset(r.Term)
+	r.tick = r.tickHeartbeat
+	r.lead = r.id
+	r.state = StateLeader
+	// Followers enter replicate mode when they've been successfully probed
+	// (perhaps after having received a snapshot as a result). The leader is
+	// trivially in this state. Note that r.reset() has initialized this
+	// progress with the last index already.
+	r.prs.Progress[r.id].BecomeReplicate()
+
+	// Conservatively set the pendingConfIndex to the last index in the
+	// log. There may or may not be a pending config change, but it's
+	// safe to delay any future proposals until we commit all our
+	// pending log entries, and scanning the entire tail of the log
+	// could be expensive.
+	r.pendingConfIndex = r.raftLog.lastIndex()
+
+	emptyEnt := pb.Entry{Data: nil}
+	if !r.appendEntry(emptyEnt) {
+		// This won't happen because we just called reset() above.
+		r.logger.Panic(&quot;empty entry was dropped&quot;)
+	}
+	// As a special case, don't count the initial empty entry towards the
+	// uncommitted log quota. This is because we want to preserve the
+	// behavior of allowing one entry larger than quota if the current
+	// usage is zero.
+	r.reduceUncommittedSize([]pb.Entry{emptyEnt})
+	r.logger.Infof(&quot;%x became leader at term %d&quot;, r.id, r.Term)
+}
+</code></pre>
+<p>从<strong>candidate</strong>转变为<strong>leader</strong>，需要在自己的log中append一条当前term的日志，并广播给其他节点</p>
+
+</article>
+
+
+      
+        <div class="my-4">
+    
+    <a href="https://wildhunting.github.io/tags/etcd/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#etcd</a>
+    
+    <a href="https://wildhunting.github.io/tags/raft/" class="inline-block bg-tertiary-bg text-sm rounded px-3 py-1 my-1 me-2 hover:text-eureka">#raft</a>
+    
+</div>
+      
+
+      
+
+
+
+      
+
+      
+  <div
+    class="-mx-2 mt-4 flex flex-col border-t px-2 pt-4 md:flex-row md:justify-between"
+  >
+    <div>
+      
+        <span class="text-primary-text block font-bold"
+          >Previous</span
+        >
+        <a href="https://wildhunting.github.io/posts/6.824/6.824-lab1/" class="block">6.824 lab1 解析</a>
+      
+    </div>
+    <div class="mt-4 md:mt-0 md:text-right">
+      
+    </div>
+  </div>
+
+
+      
+
+
+
+    </div>
+    
+      <div class="col-span-2">
+        
+          
+<div class="bg-secondary-bg prose max-w-none rounded p-6">
+  <h3>Series of Posts</h3>
+  
+    
+      <a href="https://wildhunting.github.io/posts/etcd/raft-leader-election/" class="no-underline">ETCD RAFT选举源码解析</a>
+      <br />
+    
+  
+</div>
+
+        
+        
+          <div
+  class="
+    bg-primary-bg
+   prose sticky top-16 z-10 hidden px-6 py-4 lg:block"
+>
+  <h3>On This Page</h3>
+</div>
+<div
+  class="sticky-toc  hidden px-6 pb-6 lg:block"
+>
+  <nav id="TableOfContents">
+  <ul>
+    <li><a href="#0-引言">0. 引言</a></li>
+    <li><a href="#1-etcd对于raft选举算法优化措施">1. etcd对于raft选举算法优化措施</a>
+      <ul>
+        <li><a href="#11-pre-vote">1.1 Pre-Vote</a></li>
+        <li><a href="#12-check-quorum">1.2 Check Quorum</a></li>
+        <li><a href="#13-leader-lease">1.3 Leader Lease</a></li>
+        <li><a href="#14-引入的新问题与解决方案">1.4 引入的新问题与解决方案</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-etcd中raft选举的实现">2. etcd中Raft选举的实现</a>
+      <ul>
+        <li><a href="#21-发起vote或pre-vote流程">2.1 发起vote或pre-vote流程</a>
+          <ul>
+            <li><a href="#211-election-timeout">2.1.1 Election timeout</a></li>
+            <li><a href="#212-msghup消息处理与hup方法">2.1.2 MsgHup消息处理与hup方法</a></li>
+            <li><a href="#213-campaign">2.1.3 campaign</a></li>
+          </ul>
+        </li>
+        <li><a href="#22-节点收到vote或pre-vote消息处理流程">2.2 节点收到vote或pre-vote消息处理流程</a></li>
+        <li><a href="#23-节点收到处理msgprevoteresp或msgvoteresp消息流程">2.3 节点收到处理MsgPreVoteResp或MsgVoteResp消息流程</a>
+          <ul>
+            <li><a href="#231-step内处理">2.3.1 Step内处理</a></li>
+            <li><a href="#232-stepcandidate内处理">2.3.2 stepCandidate内处理</a></li>
+          </ul>
+        </li>
+        <li><a href="#24-转变领导者身份">2.4 转变领导者身份</a>
+          <ul>
+            <li><a href="#241-becomeleader">2.4.1 becomeLeader()</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    enableStickyToc();
+  });
+</script>
+
+        
+      </div>
+    
+
+    
+    
+  </div>
+
+  
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        hljs.highlightAll();
+      });
+    </script>
+
+          </div>
+        </div>
+      
+    </main>
+    <footer class="pl-scrollbar">
+      <div class="mx-auto w-full max-w-screen-xl"><div class="text-center p-6 pin-b">
+    <p class="text-sm text-tertiary-text"> Powered by the <a href="https://github.com/wangchucheng/hugo-eureka" class="hover:text-eureka">Eureka</a> theme for <a href="https://gohugo.io" class="hover:text-eureka">Hugo</a></p>
+</div></div>
+    </footer>
+  </body>
+</html>
