@@ -110,7 +110,7 @@
 
 
 
-<meta property="og:updated_time" content="2023-04-14T21:34:52&#43;08:00" />
+<meta property="og:updated_time" content="2023-06-01T16:53:32&#43;08:00" />
 
 
 
@@ -400,6 +400,162 @@
   
   <div class="w-full ">
     <div class="prose">
+  <a href="/posts/cmu15-445/lab2-bplustree/" class="no-underline">
+    <h3 class="mt-0">cmu 15445 b&#43;树实现</h3>
+  </a>
+  
+    cmu15445 20022 b&#43; tree
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2023-06-01</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>1 min read</span>
+  </div>
+
+  
+    <div class="me-6 my-2">
+      <i class="fas fa-folder me-1"></i>
+      
+        <a href="/categories/cmu15445/" class="hover:text-eureka"
+          >cmu15445</a
+        >
+      
+    </div>
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+</div>
+</div>
+
+<div class="mb-6">
+  <div class="bg-secondary-bg rounded border hover:shadow-lg transition ease-in-out duration-200 px-6 pt-6 pb-4">
+  <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/etcd/mvcc/" class="no-underline">
+    <h3 class="mt-0">Mvcc</h3>
+  </a>
+  
+    1.初始化后端存储 1.1 初始化backend // server/etcdserver/server.go line:383 be := openBackend(cfg, beHooks) // server/mvcc/backend/backend.go func newBackend(bcfg BackendConfig) *backend { if bcfg.Logger == nil { bcfg.Logger = zap.NewNop() } bopts := &amp;bolt.Options{} if boltOpenOptions != nil { *bopts = *boltOpenOptions } bopts.InitialMmapSize = bcfg.mmapSize() bopts.FreelistType = bcfg.BackendFreelistType bopts.NoSync = bcfg.UnsafeNoFsync bopts.NoGrowSync = bcfg.UnsafeNoFsync bopts.Mlock = bcfg.Mlock // new db according to bcfg.Path db, err := bolt.Open(bcfg.Path, 0600, bopts) if err != nil { bcfg.Logger.Panic(&#34;failed to open database&#34;, zap.String(&#34;path&#34;, bcfg.
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2023-05-09</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>3 min read</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+</div>
+</div>
+
+<div class="mb-6">
+  <div class="bg-secondary-bg rounded border hover:shadow-lg transition ease-in-out duration-200 px-6 pt-6 pb-4">
+  <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/etcd/raft-log-replication/" class="no-underline">
+    <h3 class="mt-0">ETCD RAFT日志复制源码解析</h3>
+  </a>
+  
+    ETCD RAFT日志复制源码解析
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2023-04-28</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>0 min read</span>
+  </div>
+
+  
+    <div class="me-6 my-2">
+      <i class="fas fa-folder me-1"></i>
+      
+        <a href="/categories/etcd/" class="hover:text-eureka"
+          >etcd</a
+        >
+      
+    </div>
+  
+
+  
+    <div class="me-6 my-2">
+      <i class="fas fa-th-list me-1"></i>
+      
+        <a href="/series/etcd%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="hover:text-eureka"
+          >etcd源码解析</a
+        >
+      
+    </div>
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+</div>
+</div>
+
+<div class="mb-6">
+  <div class="bg-secondary-bg rounded border hover:shadow-lg transition ease-in-out duration-200 px-6 pt-6 pb-4">
+  <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
   <a href="/posts/update_blog/" class="no-underline">
     <h3 class="mt-0">Update blog</h3>
   </a>
@@ -537,67 +693,6 @@
     </div>
   
 
-  
-</div>
-
-  
-</div>
-
-  </div>
-
-  
-</div>
-</div>
-</div>
-
-<div class="mb-6">
-  <div class="bg-secondary-bg rounded border hover:shadow-lg transition ease-in-out duration-200 px-6 pt-6 pb-4">
-  <div class="flex flex-col-reverse lg:flex-row justify-between">
-  
-  <div class="w-full ">
-    <div class="prose">
-  <a href="/posts/etcd/raft-leader-election/" class="no-underline">
-    <h3 class="mt-0">ETCD RAFT选举源码解析</h3>
-  </a>
-  
-    ETCD RAFT选举源码解析
-  
-
-  
-    <div
-  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
->
-  <div class="me-6 my-2">
-    <i class="fas fa-calendar me-1"></i>
-    <span
-      >2023-04-12</span
-    >
-  </div>
-  <div class="me-6 my-2">
-    <i class="fas fa-clock me-1"></i>
-    <span>9 min read</span>
-  </div>
-
-  
-    <div class="me-6 my-2">
-      <i class="fas fa-folder me-1"></i>
-      
-        <a href="/categories/etcd/" class="hover:text-eureka"
-          >etcd</a
-        >
-      
-    </div>
-  
-
-  
-    <div class="me-6 my-2">
-      <i class="fas fa-th-list me-1"></i>
-      
-        <a href="/series/etcd%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="hover:text-eureka"
-          >etcd源码解析</a
-        >
-      
-    </div>
   
 </div>
 

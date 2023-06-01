@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-<title>Update blog | Wild Hunt</title>
+<title>Mvcc | Wild Hunt</title>
 
 <meta name="generator" content="Hugo Eureka 0.9.3" />
 <link rel="stylesheet" href="/css/eureka.min.9cec6350e37e534b0338fa9a085bf06855de3b0f2dcf857e792e5e97b07ea905d4d5513db554cbc26a9c3da622bae92d.css">
@@ -75,7 +75,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
 
 <meta name="description"
-  content="update my blog">
+  content="1.初始化后端存储 1.1 初始化backend // server/etcdserver/server.go line:383 be := openBackend(cfg, beHooks) // server/mvcc/backend/backend.go func newBackend(bcfg BackendConfig) *backend { if bcfg.Logger == nil { bcfg.Logger = zap.NewNop() } bopts := &amp;bolt.Options{} if boltOpenOptions != nil { *bopts = *boltOpenOptions } bopts.InitialMmapSize = bcfg.mmapSize() bopts.FreelistType = bcfg.BackendFreelistType bopts.NoSync = bcfg.UnsafeNoFsync bopts.NoGrowSync = bcfg.UnsafeNoFsync bopts.Mlock = bcfg.Mlock // new db according to bcfg.Path db, err := bolt.Open(bcfg.Path, 0600, bopts) if err != nil { bcfg.Logger.Panic(&quot;failed to open database&quot;, zap.String(&quot;path&quot;, bcfg.">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -87,8 +87,8 @@
       "item":"/posts/"},{
       "@type": "ListItem",
       "position": 2 ,
-      "name":"Update blog",
-      "item":"/posts/update_blog/"}]
+      "name":"Mvcc",
+      "item":"/posts/etcd/mvcc/"}]
 }
 </script>
 
@@ -100,11 +100,11 @@
     "@type": "Article",
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "/posts/update_blog/"
+        "@id": "/posts/etcd/mvcc/"
     },
-    "headline": "Update blog | Wild Hunt","datePublished": "2023-04-14T21:34:52+08:00",
-    "dateModified": "2023-04-14T21:34:52+08:00",
-    "wordCount":  31 ,
+    "headline": "Mvcc | Wild Hunt","datePublished": "2023-05-09T13:22:15+08:00",
+    "dateModified": "2023-05-09T13:22:15+08:00",
+    "wordCount":  577 ,
     "publisher": {
         "@type": "Person",
         "name": "WANG Chucheng",
@@ -113,20 +113,22 @@
             "url": "/images/icon.png"
         }
         },
-    "description": "update my blog"
+    "description": "1.初始化后端存储 1.1 初始化backend \/\/ server\/etcdserver\/server.go line:383 be := openBackend(cfg, beHooks) \/\/ server\/mvcc\/backend\/backend.go func newBackend(bcfg BackendConfig) *backend { if bcfg.Logger == nil { bcfg.Logger = zap.NewNop() } bopts := \u0026amp;bolt.Options{} if boltOpenOptions != nil { *bopts = *boltOpenOptions } bopts.InitialMmapSize = bcfg.mmapSize() bopts.FreelistType = bcfg.BackendFreelistType bopts.NoSync = bcfg.UnsafeNoFsync bopts.NoGrowSync = bcfg.UnsafeNoFsync bopts.Mlock = bcfg.Mlock \/\/ new db according to bcfg.Path db, err := bolt.Open(bcfg.Path, 0600, bopts) if err != nil { bcfg.Logger.Panic(\u0026quot;failed to open database\u0026quot;, zap.String(\u0026quot;path\u0026quot;, bcfg."
 }
-</script><meta property="og:title" content="Update blog | Wild Hunt" />
+</script><meta property="og:title" content="Mvcc | Wild Hunt" />
 <meta property="og:type" content="article" />
 
 
 <meta property="og:image" content="/images/icon.png">
 
 
-<meta property="og:url" content="/posts/update_blog/" />
+<meta property="og:url" content="/posts/etcd/mvcc/" />
 
 
 
-<meta property="og:description" content="update my blog" />
+
+<meta property="og:description" content="1.初始化后端存储 1.1 初始化backend // server/etcdserver/server.go line:383 be := openBackend(cfg, beHooks) // server/mvcc/backend/backend.go func newBackend(bcfg BackendConfig) *backend { if bcfg.Logger == nil { bcfg.Logger = zap.NewNop() } bopts := &amp;bolt.Options{} if boltOpenOptions != nil { *bopts = *boltOpenOptions } bopts.InitialMmapSize = bcfg.mmapSize() bopts.FreelistType = bcfg.BackendFreelistType bopts.NoSync = bcfg.UnsafeNoFsync bopts.NoGrowSync = bcfg.UnsafeNoFsync bopts.Mlock = bcfg.Mlock // new db according to bcfg.Path db, err := bolt.Open(bcfg.Path, 0600, bopts) if err != nil { bcfg.Logger.Panic(&quot;failed to open database&quot;, zap.String(&quot;path&quot;, bcfg." />
+
 
 
 
@@ -142,10 +144,10 @@
 
 
 
-<meta property="article:published_time" content="2023-04-14T21:34:52&#43;08:00" />
+<meta property="article:published_time" content="2023-05-09T13:22:15&#43;08:00" />
 
 
-<meta property="article:modified_time" content="2023-04-14T21:34:52&#43;08:00" />
+<meta property="article:modified_time" content="2023-05-09T13:22:15&#43;08:00" />
 
 
 
@@ -235,7 +237,7 @@
       class="lg:col-start-2 bg-secondary-bg col-span-2 rounded px-6 py-8 lg:col-span-6"
     >
       <article class="prose">
-  <h1 class="mb-4">Update blog</h1>
+  <h1 class="mb-4">Mvcc</h1>
 
   <div
   class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
@@ -243,23 +245,14 @@
   <div class="me-6 my-2">
     <i class="fas fa-calendar me-1"></i>
     <span
-      >2023-04-14</span
+      >2023-05-09</span
     >
   </div>
   <div class="me-6 my-2">
     <i class="fas fa-clock me-1"></i>
-    <span>1 min read</span>
+    <span>3 min read</span>
   </div>
 
-  
-    <div class="me-6 my-2">
-      <i class="fas fa-folder me-1"></i>
-      
-        <a href="/categories/update-blog/" class="hover:text-eureka"
-          >update blog</a
-        >
-      
-    </div>
   
 
   
@@ -269,16 +262,209 @@
   
   
 
-  <h1 id="how-to-upadte-my-blog">How to upadte my blog</h1>
-<h2 id="update-public">update public</h2>
-<pre><code>first cd blog root directory
-hugo -D
+  <h1 id="1初始化后端存储">1.初始化后端存储</h1>
+<h2 id="11-初始化backend">1.1 初始化backend</h2>
+<pre><code class="language-go">// server/etcdserver/server.go line:383
+be := openBackend(cfg, beHooks)
+
+// server/mvcc/backend/backend.go
+func newBackend(bcfg BackendConfig) *backend {
+	if bcfg.Logger == nil {
+		bcfg.Logger = zap.NewNop()
+	}
+
+	bopts := &amp;bolt.Options{}
+	if boltOpenOptions != nil {
+		*bopts = *boltOpenOptions
+	}
+	bopts.InitialMmapSize = bcfg.mmapSize()
+	bopts.FreelistType = bcfg.BackendFreelistType
+	bopts.NoSync = bcfg.UnsafeNoFsync
+	bopts.NoGrowSync = bcfg.UnsafeNoFsync
+	bopts.Mlock = bcfg.Mlock
+    // new db according to bcfg.Path
+	db, err := bolt.Open(bcfg.Path, 0600, bopts)
+	if err != nil {
+		bcfg.Logger.Panic(&quot;failed to open database&quot;, zap.String(&quot;path&quot;, bcfg.Path), zap.Error(err))
+	}
+
+	// In future, may want to make buffering optional for low-concurrency systems
+	// or dynamically swap between buffered/non-buffered depending on workload.
+	b := &amp;backend{
+		bopts: bopts,
+		db:    db,
+
+		batchInterval: bcfg.BatchInterval,
+		batchLimit:    bcfg.BatchLimit,
+		mlock:         bcfg.Mlock,
+        // 注意在这里未初始化*bbolt.Tx
+		readTx: &amp;readTx{
+			baseReadTx: baseReadTx{
+				buf: txReadBuffer{
+					txBuffer:   txBuffer{make(map[BucketID]*bucketBuffer)},
+					bufVersion: 0,
+				},
+				buckets: make(map[BucketID]*bolt.Bucket),
+				txWg:    new(sync.WaitGroup),
+				txMu:    new(sync.RWMutex),
+			},
+		},
+		txReadBufferCache: txReadBufferCache{
+			mu:         sync.Mutex{},
+			bufVersion: 0,
+			buf:        nil,
+		},
+
+		stopc: make(chan struct{}),
+		donec: make(chan struct{}),
+
+		lg: bcfg.Logger,
+	}
+
+	b.batchTx = newBatchTxBuffered(b)
+	// We set it after newBatchTxBuffered to skip the 'empty' commit.
+	b.hooks = bcfg.Hooks
+
+	go b.run()
+	return b
+}
+
 </code></pre>
-<h2 id="push-to-github">push to github</h2>
-<pre><code>cd public
-git add -A
-git commit -m &quot;date&quot;
-git push -u origin master
+<h2 id="12初始化lessor">1.2.初始化lessor</h2>
+<pre><code class="language-go">// server/etcdserver/server.go line:599
+// always recover lessor before kv. When we recover the mvcc.KV it will reattach keys to its leases.
+// If we recover mvcc.KV first, it will attach the keys to the wrong lessor before it recovers.
+	srv.lessor = lease.NewLessor(srv.Logger(), srv.be, srv.cluster, lease.LessorConfig{
+		MinLeaseTTL:                int64(math.Ceil(minTTL.Seconds())),
+		CheckpointInterval:         cfg.LeaseCheckpointInterval,
+		CheckpointPersist:          cfg.LeaseCheckpointPersist,
+		ExpiredLeasesRetryInterval: srv.Cfg.ReqTimeout(),
+	})
+
+// server/etcdserver/server.go line:659
+	if srv.Cfg.EnableLeaseCheckpoint {
+		// setting checkpointer enables lease checkpoint feature.
+		srv.lessor.SetCheckpointer(func(ctx context.Context, cp *pb.LeaseCheckpointRequest) {
+			srv.raftRequestOnce(ctx, pb.InternalRaftRequest{LeaseCheckpoint: cp})
+		})
+	}
+
+
+// server/lease/lessor.go
+func newLessor(lg *zap.Logger, b backend.Backend, cluster cluster, cfg LessorConfig) *lessor {
+	checkpointInterval := cfg.CheckpointInterval
+	expiredLeaseRetryInterval := cfg.ExpiredLeasesRetryInterval
+	if checkpointInterval == 0 {
+		checkpointInterval = defaultLeaseCheckpointInterval
+	}
+	if expiredLeaseRetryInterval == 0 {
+		expiredLeaseRetryInterval = defaultExpiredleaseRetryInterval
+	}
+	l := &amp;lessor{
+		leaseMap:                  make(map[LeaseID]*Lease),
+		itemMap:                   make(map[LeaseItem]LeaseID),
+		leaseExpiredNotifier:      newLeaseExpiredNotifier(),
+		leaseCheckpointHeap:       make(LeaseQueue, 0),
+		b:                         b,
+		minLeaseTTL:               cfg.MinLeaseTTL,
+		checkpointInterval:        checkpointInterval,
+		expiredLeaseRetryInterval: expiredLeaseRetryInterval,
+		checkpointPersist:         cfg.CheckpointPersist,
+		// expiredC is a small buffered chan to avoid unnecessary blocking.
+		expiredC: make(chan []*Lease, 16),
+		stopC:    make(chan struct{}),
+		doneC:    make(chan struct{}),
+		lg:       lg,
+		cluster:  cluster,
+	}
+	l.initAndRecover()
+
+	go l.runLoop()
+
+	return l
+}
+
+</code></pre>
+<h2 id="13-初始化watchablekv">1.3 初始化WatchableKV</h2>
+<pre><code class="language-go">// server/etcdserver/server.go line:616
+srv.kv = mvcc.New(srv.Logger(), srv.be, srv.lessor, mvcc.StoreConfig{CompactionBatchLimit: cfg.CompactionBatchLimit})
+
+// server/mvcc/watchable_store.go
+func newWatchableStore(lg *zap.Logger, b backend.Backend, le lease.Lessor, cfg StoreConfig) *watchableStore {
+	if lg == nil {
+		lg = zap.NewNop()
+	}
+	s := &amp;watchableStore{
+        // 初始化kvstore
+		store:    NewStore(lg, b, le, cfg),
+		victimc:  make(chan struct{}, 1),
+		unsynced: newWatcherGroup(),
+		synced:   newWatcherGroup(),
+		stopc:    make(chan struct{}),
+	}
+	s.store.ReadView = &amp;readView{s}
+	s.store.WriteView = &amp;writeView{s}
+	if s.le != nil {
+		// use this store as the deleter so revokes trigger watch events
+		s.le.SetRangeDeleter(func() lease.TxnDelete { return s.Write(traceutil.TODO()) })
+	}
+	s.wg.Add(2)
+	go s.syncWatchersLoop()
+	go s.syncVictimsLoop()
+	return s
+}
+</code></pre>
+<h2 id="14-初始化kvstore">1.4 初始化kvstore</h2>
+<pre><code class="language-go">// server/mvcc/kvstore
+// NewStore returns a new store. It is useful to create a store inside
+// mvcc pkg. It should only be used for testing externally.
+func NewStore(lg *zap.Logger, b backend.Backend, le lease.Lessor, cfg StoreConfig) *store {
+	if lg == nil {
+		lg = zap.NewNop()
+	}
+	if cfg.CompactionBatchLimit == 0 {
+		cfg.CompactionBatchLimit = defaultCompactBatchLimit
+	}
+	s := &amp;store{
+		cfg:     cfg,
+		b:       b,
+		kvindex: newTreeIndex(lg),
+
+		le: le,
+
+		currentRev:     1,
+		compactMainRev: -1,
+
+		fifoSched: schedule.NewFIFOScheduler(),
+
+		stopc: make(chan struct{}),
+
+		lg: lg,
+	}
+	s.hashes = newHashStorage(lg, s)
+	s.ReadView = &amp;readView{s}
+	s.WriteView = &amp;writeView{s}
+	if s.le != nil {
+		s.le.SetRangeDeleter(func() lease.TxnDelete { return s.Write(traceutil.TODO()) })
+	}
+
+	tx := s.b.BatchTx()
+	tx.LockOutsideApply()
+	tx.UnsafeCreateBucket(buckets.Key)
+	tx.UnsafeCreateBucket(buckets.Meta)
+	tx.Unlock()
+	s.b.ForceCommit()
+
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if err := s.restore(); err != nil {
+		// TODO: return the error instead of panic here?
+		panic(&quot;failed to recover store from backend&quot;)
+	}
+
+	return s
+}
+
 </code></pre>
 
 </article>
@@ -301,13 +487,13 @@ git push -u origin master
         <span class="text-primary-text block font-bold"
           >Previous</span
         >
-        <a href="/posts/etcd/raft-log-replication/" class="block">ETCD RAFT日志复制源码解析</a>
+        <a href="/posts/cmu15-445/lab2-bplustree/" class="block">cmu 15445 b&#43;树实现</a>
       
     </div>
     <div class="mt-4 md:mt-0 md:text-right">
       
         <span class="text-primary-text block font-bold">Next</span>
-        <a href="/posts/etcd/wal-method/" class="block">WAL Method</a>
+        <a href="/posts/etcd/raft-log-replication/" class="block">ETCD RAFT日志复制源码解析</a>
       
     </div>
   </div>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>cmu15445 on Wild Hunt</title>
+    <link>/categories/cmu15445/</link>
+    <description>Recent content in cmu15445 on Wild Hunt</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 01 Jun 2023 16:53:32 +0800</lastBuildDate><atom:link href="/categories/cmu15445/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>cmu 15445 b&#43;树实现</title>
+      <link>/posts/cmu15-445/lab2-bplustree/</link>
+      <pubDate>Thu, 01 Jun 2023 16:53:32 +0800</pubDate>
+      
+      <guid>/posts/cmu15-445/lab2-bplustree/</guid>
+      <description>1. B+Tree Data Structure 1.1 GetValue() 点查询很简单，略
+1.2 Insert() INDEX_TEMPLATE_ARGUMENTS auto BPLUSTREE_TYPE::Insert(const KeyType &amp;amp;key, const ValueType &amp;amp;value, Transaction *transaction) -&amp;gt; bool { if (IsEmpty()) { auto *leaf = reinterpret_cast&amp;lt;LeafPage *&amp;gt;(buffer_pool_manager_-&amp;gt;NewPage(&amp;amp;root_page_id_)-&amp;gt;GetData()); leaf-&amp;gt;Init(root_page_id_, INVALID_PAGE_ID, leaf_max_size_); leaf-&amp;gt;Insert(key, value, comparator_); UpdateRootPageId(root_page_id_); buffer_pool_manager_-&amp;gt;UnpinPage(root_page_id_, true); return true; } auto *l = reinterpret_cast&amp;lt;LeafPage*&amp;gt;(GetLeafPage(key)-&amp;gt;GetData()); if (!l-&amp;gt;Insert(key, value, comparator_)) { buffer_pool_manager_-&amp;gt;UnpinPage(l-&amp;gt;GetPageId(), false); return false; } SolveOverFlow(l); return true; } 如果树为空则从buffer_pool_manager_取出新页，进行init初始化、insert插入、更新root_id、unpin
+若不为空，则查找key所在的区间leaf节点，进行插入操作，实际可以使用二分法在节点内搜寻，std::lower_bound有现成的工具函数</description>
+    </item>
+    
+  </channel>
+</rss>

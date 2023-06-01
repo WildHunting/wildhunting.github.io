@@ -87,21 +87,45 @@
     "itemListElement":[{
             "@type":"ListItem",
             "position":  1 ,
+            "name": "cmu 15445 b+树实现",
+            "description": "cmu15445 20022 b+ tree",
+            "url": "/posts/cmu15-445/lab2-bplustree/"
+        },{
+            "@type":"ListItem",
+            "position":  2 ,
+            "name": "Mvcc",
+            "description": "1.初始化后端存储 1.1 初始化backend // server/etcdserver/server.go line:383 be := openBackend(cfg, beHooks) // server/mvcc/backend/backend.go func newBackend(bcfg BackendConfig) *backend { if bcfg.Logger == nil { bcfg.Logger = zap.NewNop() } bopts := \u0026amp;bolt.Options{} if boltOpenOptions != nil { *bopts = *boltOpenOptions } bopts.InitialMmapSize = bcfg.mmapSize() bopts.FreelistType = bcfg.BackendFreelistType bopts.NoSync = bcfg.UnsafeNoFsync bopts.NoGrowSync = bcfg.UnsafeNoFsync bopts.Mlock = bcfg.Mlock // new db according to bcfg.Path db, err := bolt.Open(bcfg.Path, 0600, bopts) if err != nil { bcfg.Logger.Panic(\u0026quot;failed to open database\u0026quot;, zap.String(\u0026quot;path\u0026quot;, bcfg.",
+            "url": "/posts/etcd/mvcc/"
+        },{
+            "@type":"ListItem",
+            "position":  3 ,
+            "name": "ETCD RAFT日志复制源码解析",
+            "description": "ETCD RAFT日志复制源码解析",
+            "url": "/posts/etcd/raft-log-replication/"
+        },{
+            "@type":"ListItem",
+            "position":  4 ,
             "name": "Update blog",
             "description": "update my blog",
             "url": "/posts/update_blog/"
         },{
             "@type":"ListItem",
-            "position":  2 ,
+            "position":  5 ,
             "name": "WAL Method",
             "description": "ETCD-WAL模块方法简介",
             "url": "/posts/etcd/wal-method/"
         },{
             "@type":"ListItem",
-            "position":  3 ,
+            "position":  6 ,
             "name": "6.824 lab1 解析",
             "description": "6.824 lab1解析",
             "url": "/posts/6.824/6.824-lab1/"
+        },{
+            "@type":"ListItem",
+            "position":  7 ,
+            "name": "ETCD RAFT选举源码解析",
+            "description": "ETCD RAFT选举源码解析",
+            "url": "/posts/etcd/raft-leader-election/"
         }
     ]
 }
@@ -136,7 +160,7 @@
 
 
 
-<meta property="og:updated_time" content="2023-04-14T21:34:52&#43;08:00" />
+<meta property="og:updated_time" content="2023-06-01T16:53:32&#43;08:00" />
 
 
 
@@ -226,6 +250,156 @@
 
   <div class="bg-secondary-bg rounded px-6">
     <div class="overflow-hidden divide-y">
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/cmu15-445/lab2-bplustree/" class="no-underline">
+    <h3 class="mt-0">cmu 15445 b&#43;树实现</h3>
+  </a>
+  
+    cmu15445 20022 b&#43; tree
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2023-06-01</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>1 min read</span>
+  </div>
+
+  
+    <div class="me-6 my-2">
+      <i class="fas fa-folder me-1"></i>
+      
+        <a href="/categories/cmu15445/" class="hover:text-eureka"
+          >cmu15445</a
+        >
+      
+    </div>
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/etcd/mvcc/" class="no-underline">
+    <h3 class="mt-0">Mvcc</h3>
+  </a>
+  
+    1.初始化后端存储 1.1 初始化backend // server/etcdserver/server.go line:383 be := openBackend(cfg, beHooks) // server/mvcc/backend/backend.go func newBackend(bcfg BackendConfig) *backend { if bcfg.Logger == nil { bcfg.Logger = zap.NewNop() } bopts := &amp;bolt.Options{} if boltOpenOptions != nil { *bopts = *boltOpenOptions } bopts.InitialMmapSize = bcfg.mmapSize() bopts.FreelistType = bcfg.BackendFreelistType bopts.NoSync = bcfg.UnsafeNoFsync bopts.NoGrowSync = bcfg.UnsafeNoFsync bopts.Mlock = bcfg.Mlock // new db according to bcfg.Path db, err := bolt.Open(bcfg.Path, 0600, bopts) if err != nil { bcfg.Logger.Panic(&#34;failed to open database&#34;, zap.String(&#34;path&#34;, bcfg.
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2023-05-09</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>3 min read</span>
+  </div>
+
+  
+
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/etcd/raft-log-replication/" class="no-underline">
+    <h3 class="mt-0">ETCD RAFT日志复制源码解析</h3>
+  </a>
+  
+    ETCD RAFT日志复制源码解析
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2023-04-28</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>0 min read</span>
+  </div>
+
+  
+    <div class="me-6 my-2">
+      <i class="fas fa-folder me-1"></i>
+      
+        <a href="/categories/etcd/" class="hover:text-eureka"
+          >etcd</a
+        >
+      
+    </div>
+  
+
+  
+    <div class="me-6 my-2">
+      <i class="fas fa-th-list me-1"></i>
+      
+        <a href="/series/etcd%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="hover:text-eureka"
+          >etcd源码解析</a
+        >
+      
+    </div>
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
   
   <div class="py-6">
     <div class="flex flex-col-reverse lg:flex-row justify-between">
@@ -377,31 +551,70 @@
 </div>
   </div>
   
+  <div class="py-6">
+    <div class="flex flex-col-reverse lg:flex-row justify-between">
+  
+  <div class="w-full ">
+    <div class="prose">
+  <a href="/posts/etcd/raft-leader-election/" class="no-underline">
+    <h3 class="mt-0">ETCD RAFT选举源码解析</h3>
+  </a>
+  
+    ETCD RAFT选举源码解析
+  
+
+  
+    <div
+  class="text-tertiary-text not-prose mt-2 flex flex-row flex-wrap items-center"
+>
+  <div class="me-6 my-2">
+    <i class="fas fa-calendar me-1"></i>
+    <span
+      >2023-04-12</span
+    >
+  </div>
+  <div class="me-6 my-2">
+    <i class="fas fa-clock me-1"></i>
+    <span>9 min read</span>
+  </div>
+
+  
+    <div class="me-6 my-2">
+      <i class="fas fa-folder me-1"></i>
+      
+        <a href="/categories/etcd/" class="hover:text-eureka"
+          >etcd</a
+        >
+      
+    </div>
+  
+
+  
+    <div class="me-6 my-2">
+      <i class="fas fa-th-list me-1"></i>
+      
+        <a href="/series/etcd%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" class="hover:text-eureka"
+          >etcd源码解析</a
+        >
+      
+    </div>
+  
+</div>
+
+  
+</div>
+
+  </div>
+
+  
+</div>
+  </div>
+  
 </div>
 
 
   </div>
   
-    <ul class="pagination pagination-default">
-      <li class="page-item disabled">
-        <a aria-disabled="true" aria-label="First" class="page-link" role="button" tabindex="-1"><span aria-hidden="true">&laquo;&laquo;</span></a>
-      </li>
-      <li class="page-item disabled">
-        <a aria-disabled="true" aria-label="Previous" class="page-link" role="button" tabindex="-1"><span aria-hidden="true">&laquo;</span></a>
-      </li>
-      <li class="page-item active">
-        <a aria-current="page" aria-label="Page 1" class="page-link" role="button">1</a>
-      </li>
-      <li class="page-item">
-        <a href="/posts/page/2/" aria-label="Page 2" class="page-link" role="button">2</a>
-      </li>
-      <li class="page-item">
-        <a href="/posts/page/2/" aria-label="Next" class="page-link" role="button"><span aria-hidden="true">&raquo;</span></a>
-      </li>
-      <li class="page-item">
-        <a href="/posts/page/2/" aria-label="Last" class="page-link" role="button"><span aria-hidden="true">&raquo;&raquo;</span></a>
-      </li>
-    </ul>
 
           </div>
         </div>
