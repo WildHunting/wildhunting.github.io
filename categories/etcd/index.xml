@@ -6,7 +6,16 @@
     <description>Recent content in etcd on Wild Hunt</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 28 Apr 2023 13:54:43 +0800</lastBuildDate><atom:link href="/categories/etcd/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 09 May 2023 13:22:15 +0800</lastBuildDate><atom:link href="/categories/etcd/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Mvcc</title>
+      <link>/posts/etcd/mvcc/</link>
+      <pubDate>Tue, 09 May 2023 13:22:15 +0800</pubDate>
+      
+      <guid>/posts/etcd/mvcc/</guid>
+      <description>1.初始化后端存储 1.1 初始化backend // server/etcdserver/server.go line:383 be := openBackend(cfg, beHooks) // server/mvcc/backend/backend.go func newBackend(bcfg BackendConfig) *backend { if bcfg.Logger == nil { bcfg.Logger = zap.NewNop() } bopts := &amp;amp;bolt.Options{} if boltOpenOptions != nil { *bopts = *boltOpenOptions } bopts.InitialMmapSize = bcfg.mmapSize() bopts.FreelistType = bcfg.BackendFreelistType bopts.NoSync = bcfg.UnsafeNoFsync bopts.NoGrowSync = bcfg.UnsafeNoFsync bopts.Mlock = bcfg.Mlock // new db according to bcfg.Path db, err := bolt.Open(bcfg.Path, 0600, bopts) if err != nil { bcfg.Logger.Panic(&amp;quot;failed to open database&amp;quot;, zap.String(&amp;quot;path&amp;quot;, bcfg.</description>
+    </item>
+    
     <item>
       <title>ETCD RAFT日志复制源码解析</title>
       <link>/posts/etcd/raft-log-replication/</link>

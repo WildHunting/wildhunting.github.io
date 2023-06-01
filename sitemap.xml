@@ -26,13 +26,13 @@
     <loc>/</loc>
     <lastmod>2023-06-01T16:53:32+08:00</lastmod>
   </url><url>
+    <loc>/categories/etcd/</loc>
+    <lastmod>2023-05-09T13:22:15+08:00</lastmod>
+  </url><url>
     <loc>/posts/etcd/mvcc/</loc>
     <lastmod>2023-05-09T13:22:15+08:00</lastmod>
   </url><url>
     <loc>/tags/etcd/</loc>
-    <lastmod>2023-04-28T13:54:43+08:00</lastmod>
-  </url><url>
-    <loc>/categories/etcd/</loc>
     <lastmod>2023-04-28T13:54:43+08:00</lastmod>
   </url><url>
     <loc>/posts/etcd/raft-log-replication/</loc>
