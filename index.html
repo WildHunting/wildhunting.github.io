@@ -419,7 +419,7 @@
   </div>
   <div class="me-6 my-2">
     <i class="fas fa-clock me-1"></i>
-    <span>1 min read</span>
+    <span>3 min read</span>
   </div>
 
   
@@ -456,7 +456,7 @@
     <h3 class="mt-0">Mvcc</h3>
   </a>
   
-    1.初始化后端存储 1.1 初始化backend // server/etcdserver/server.go line:383 be := openBackend(cfg, beHooks) // server/mvcc/backend/backend.go func newBackend(bcfg BackendConfig) *backend { if bcfg.Logger == nil { bcfg.Logger = zap.NewNop() } bopts := &amp;bolt.Options{} if boltOpenOptions != nil { *bopts = *boltOpenOptions } bopts.InitialMmapSize = bcfg.mmapSize() bopts.FreelistType = bcfg.BackendFreelistType bopts.NoSync = bcfg.UnsafeNoFsync bopts.NoGrowSync = bcfg.UnsafeNoFsync bopts.Mlock = bcfg.Mlock // new db according to bcfg.Path db, err := bolt.Open(bcfg.Path, 0600, bopts) if err != nil { bcfg.Logger.Panic(&#34;failed to open database&#34;, zap.String(&#34;path&#34;, bcfg.
+    mvcc源码解读
   
 
   

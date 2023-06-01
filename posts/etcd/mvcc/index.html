@@ -75,7 +75,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/images/icon_hu64421c6c7700f606f0ad45d807017b09_5843_180x180_fill_box_center_3.png">
 
 <meta name="description"
-  content="1.初始化后端存储 1.1 初始化backend // server/etcdserver/server.go line:383 be := openBackend(cfg, beHooks) // server/mvcc/backend/backend.go func newBackend(bcfg BackendConfig) *backend { if bcfg.Logger == nil { bcfg.Logger = zap.NewNop() } bopts := &amp;bolt.Options{} if boltOpenOptions != nil { *bopts = *boltOpenOptions } bopts.InitialMmapSize = bcfg.mmapSize() bopts.FreelistType = bcfg.BackendFreelistType bopts.NoSync = bcfg.UnsafeNoFsync bopts.NoGrowSync = bcfg.UnsafeNoFsync bopts.Mlock = bcfg.Mlock // new db according to bcfg.Path db, err := bolt.Open(bcfg.Path, 0600, bopts) if err != nil { bcfg.Logger.Panic(&quot;failed to open database&quot;, zap.String(&quot;path&quot;, bcfg.">
+  content="mvcc源码解读">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -113,7 +113,7 @@
             "url": "/images/icon.png"
         }
         },
-    "description": "1.初始化后端存储 1.1 初始化backend \/\/ server\/etcdserver\/server.go line:383 be := openBackend(cfg, beHooks) \/\/ server\/mvcc\/backend\/backend.go func newBackend(bcfg BackendConfig) *backend { if bcfg.Logger == nil { bcfg.Logger = zap.NewNop() } bopts := \u0026amp;bolt.Options{} if boltOpenOptions != nil { *bopts = *boltOpenOptions } bopts.InitialMmapSize = bcfg.mmapSize() bopts.FreelistType = bcfg.BackendFreelistType bopts.NoSync = bcfg.UnsafeNoFsync bopts.NoGrowSync = bcfg.UnsafeNoFsync bopts.Mlock = bcfg.Mlock \/\/ new db according to bcfg.Path db, err := bolt.Open(bcfg.Path, 0600, bopts) if err != nil { bcfg.Logger.Panic(\u0026quot;failed to open database\u0026quot;, zap.String(\u0026quot;path\u0026quot;, bcfg."
+    "description": "mvcc源码解读"
 }
 </script><meta property="og:title" content="Mvcc | Wild Hunt" />
 <meta property="og:type" content="article" />
@@ -126,9 +126,7 @@
 
 
 
-
-<meta property="og:description" content="1.初始化后端存储 1.1 初始化backend // server/etcdserver/server.go line:383 be := openBackend(cfg, beHooks) // server/mvcc/backend/backend.go func newBackend(bcfg BackendConfig) *backend { if bcfg.Logger == nil { bcfg.Logger = zap.NewNop() } bopts := &amp;bolt.Options{} if boltOpenOptions != nil { *bopts = *boltOpenOptions } bopts.InitialMmapSize = bcfg.mmapSize() bopts.FreelistType = bcfg.BackendFreelistType bopts.NoSync = bcfg.UnsafeNoFsync bopts.NoGrowSync = bcfg.UnsafeNoFsync bopts.Mlock = bcfg.Mlock // new db according to bcfg.Path db, err := bolt.Open(bcfg.Path, 0600, bopts) if err != nil { bcfg.Logger.Panic(&quot;failed to open database&quot;, zap.String(&quot;path&quot;, bcfg." />
-
+<meta property="og:description" content="mvcc源码解读" />
 
 
 

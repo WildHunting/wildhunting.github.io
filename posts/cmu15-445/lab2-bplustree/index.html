@@ -104,7 +104,7 @@
     },
     "headline": "cmu 15445 b\u002b树实现 | Wild Hunt","datePublished": "2023-06-01T16:53:32+08:00",
     "dateModified": "2023-06-01T16:53:32+08:00",
-    "wordCount":  62 ,
+    "wordCount":  449 ,
     "publisher": {
         "@type": "Person",
         "name": "WANG Chucheng",
@@ -254,7 +254,7 @@
   </div>
   <div class="me-6 my-2">
     <i class="fas fa-clock me-1"></i>
-    <span>1 min read</span>
+    <span>3 min read</span>
   </div>
 
   
@@ -298,8 +298,179 @@ auto BPLUSTREE_TYPE::Insert(const KeyType &amp;key, const ValueType &amp;value, 
   return true;
 }
 </code></pre>
-<p>如果树为空则从<code>buffer_pool_manager_</code>取出新页，进行init初始化、insert插入、更新root_id、unpin</p>
-<p>若不为空，则查找key所在的区间leaf节点，进行插入操作，实际可以使用二分法在节点内搜寻，<code>std::lower_bound</code>有现成的工具函数</p>
+<p>如果树为空则从buffer_pool_manager_取出新页，进行init初始化、insert插入、更新root_id、unpin</p>
+<p>若不为空，则查找key所在的区间leaf节点，进行插入操作，实际可以使用二分法在节点内搜寻，<strong>std::lower_bound</strong>有现成的工具函数，如果插入成功（原叶子节点不包含即将要插入的key），处理节点可能发生上溢。</p>
+<pre><code class="language-c++">INDEX_TEMPLATE_ARGUMENTS
+void BPLUSTREE_TYPE::SolveOverFlow(BPlusTreePage *old) {
+  while (true) {
+      // 如果该节点未发生上溢，则unpin后退出
+    if (!old-&gt;IsOverFlow()) {
+      buffer_pool_manager_-&gt;UnpinPage(old-&gt;GetPageId(), true) ;
+      return ;
+    }
+    KeyType first_key;
+    auto *newp = Split(old, first_key);
+    if (old-&gt;IsRootPage()) {
+      auto *root = reinterpret_cast&lt;InternalPage *&gt;(buffer_pool_manager_-&gt;NewPage(&amp;root_page_id_)-&gt;GetData());
+
+      root-&gt;Init(root_page_id_, INVALID_PAGE_ID, internal_max_size_);
+      root-&gt;SetKeyAt(1, first_key);
+      root-&gt;SetValueAt(0, old-&gt;GetPageId());
+      root-&gt;SetValueAt(1, newp-&gt;GetPageId());
+      root-&gt;SetSize(2);
+
+      old-&gt;SetParentPageId(root_page_id_);
+      newp-&gt;SetParentPageId(root_page_id_);
+
+      buffer_pool_manager_-&gt;UnpinPage(old-&gt;GetPageId(), true);
+      buffer_pool_manager_-&gt;UnpinPage(newp-&gt;GetPageId(), true);
+      buffer_pool_manager_-&gt;UnpinPage(root_page_id_, true);
+
+      UpdateRootPageId(root_page_id_);
+      return ;
+    }
+    page_id_t parent_page_id = old-&gt;GetParentPageId();
+    auto *parent = reinterpret_cast&lt;InternalPage *&gt;(buffer_pool_manager_-&gt;FetchPage(parent_page_id)-&gt;GetData());
+    parent-&gt;InsertAfter(first_key, newp-&gt;GetPageId(), old-&gt;GetPageId());
+    newp-&gt;SetParentPageId(parent_page_id);
+    buffer_pool_manager_-&gt;UnpinPage(old-&gt;GetPageId(), true);
+    buffer_pool_manager_-&gt;UnpinPage(newp-&gt;GetPageId(), true);
+    old = parent;
+  }
+}
+</code></pre>
+<p>首先将发生上溢的节点进行split操作，得到一个新的节点newp，newp节点为原上溢节点的右兄弟，还有<strong>first_key</strong>变量，是要插入到父节点的变量，为newp节点最左key值，因此**pair{first_key，newp-&gt;page_id}**就是要插入到父节点的一堆pair</p>
+<p>如果是该上溢的节点是root节点，那么此时更新父节点，父节点的变量<strong>array_[0] = pair{null, old-&gt;page_id}; array[1] = pair{first_key，newp-&gt;page_id}</strong>，return</p>
+<p>如果不是父节点，就要将**pair{first_key，newp-&gt;page_id}**插入到父节点中，继续循环处理父节点可能发生上溢的情况</p>
+<h2 id="13-delete">1.3 Delete()</h2>
+<p>delete操作是最复杂的，接下来讨论如何处理下溢</p>
+<h3 id="131-向右兄弟借key">1.3.1 向右兄弟借key</h3>
+<h4 id="leaf节点向右兄弟借key">leaf节点向右兄弟借key</h4>
+<pre><code class="language-c++">  if (rsibling != INVALID_PAGE_ID) {
+    auto *r = buffer_pool_manager_-&gt;FetchPage(r_sibling);
+    r_sibling_page = reinterpret_cast&lt;LeafPage *&gt;(r-&gt;GetData());
+    if (r_sibling_page-&gt;HalfFull()) {
+      leaf_page-&gt;InsertByIndex(leaf_page-&gt;GetSize(), r_sibling_page-&gt;KeyAt(0), r_sibling_page-&gt;ValueAt(0));
+      parent-&gt;SetKeyAt(key_index_in_parent + 1, r_sibling_page-&gt;KeyAt(1));
+      r_sibling_page-&gt;DeleteByIndex(0);
+      return;
+    }
+  }
+</code></pre>
+<p>该情况很简单，就是把右兄弟节点的第一对key/value数据插入到末尾，然后将父节点的key替换为<strong>r_sibling_page-&gt;KeyAt(1)</strong>，此时下溢已经解决</p>
+<h4 id="internal节点向右兄弟借key">internal节点向右兄弟借key</h4>
+<pre><code class="language-c++">if (r_sibling != INVALID_PAGE_ID) {
+    auto *r = buffer_pool_manager_-&gt;FetchPage(r_sibling);
+    if (r_sibling_page-&gt;HalfFull()) {
+        page-&gt;InsertByIndex(page-&gt;GetSize(), parent-&gt;KeyAt(index + 1), r_sibling_page-&gt;ValueAt(0));
+        auto *redirect_page =
+            reinterpret_cast&lt;BPlusTreePage *&gt;(buffer_pool_manager_-&gt;FetchPage(r_sibling_page-&gt;ValueAt(0))-&gt;GetData());
+        redirect_page-&gt;SetParentPageId(page-&gt;GetPageId());
+        parent-&gt;SetKeyAt(index + 1, r_sibling_page-&gt;KeyAt(1));
+        for (int i = 1; i &lt; r_sibling_page-&gt;GetSize(); ++i) {
+            r_sibling_page-&gt;SetValueAt(i - 1, r_sibling_page-&gt;ValueAt(i));
+            r_sibling_page-&gt;SetKeyAt(i - 1, r_sibling_page-&gt;KeyAt(i));
+        }
+        r_sibling_page-&gt;DecreaseSize(1);
+        return;
+    }
+}
+</code></pre>
+<p>和leaf节点操作不同，internal向右兄弟借时，还要将借来的value重定向至新父节点，因为internal节点的value是page_id</p>
+<h3 id="132-向左兄弟借key">1.3.2 向左兄弟借key</h3>
+<h4 id="leaf向左兄弟借key">leaf向左兄弟借key</h4>
+<pre><code class="language-c++">  if (l_sibling != INVALID_PAGE_ID) {
+    auto *l = buffer_pool_manager_-&gt;FetchPage(l_sibling);
+    if (l_sibling_page-&gt;HalfFull()) {
+      parent-&gt;SetKeyAt(key_index_in_parent, l_sibling_page-&gt;KeyAt(l_sibling_page-&gt;GetSize() - 1));
+      leaf_page-&gt;InsertByIndex(0, l_sibling_page-&gt;KeyAt(l_sibling_page-&gt;GetSize() - 1),
+                               l_sibling_page-&gt;ValueAt(l_sibling_page-&gt;GetSize() - 1));
+      l_sibling_page-&gt;DecreaseSize(1);
+      return;
+    }
+  }
+</code></pre>
+<p>同上，很简单，将左兄弟最后一堆key/value对插入到发生下溢节点的最前面，并且将父节点的key替换为借来的key，此时下溢已经解决</p>
+<h4 id="internal向左兄弟借key">internal向左兄弟借key</h4>
+<pre><code class="language-c++">if (l_sibling != INVALID_PAGE_ID) {
+  auto *l = buffer_pool_manager_-&gt;FetchPage(l_sibling);
+  l_sibling_page = reinterpret_cast&lt;InternalPage *&gt;(l-&gt;GetData());
+  if (l_sibling_page-&gt;HalfFull()) {
+    for (int i = page-&gt;GetSize() - 1; i &gt;= 1; --i) {
+      page-&gt;SetKeyAt(i + 1, page-&gt;KeyAt(i));
+      page-&gt;SetValueAt(i + 1, page-&gt;ValueAt(i));
+    }
+    page-&gt;SetValueAt(1, page-&gt;ValueAt(0));
+    page-&gt;SetKeyAt(1, parent-&gt;KeyAt(index));
+    page-&gt;SetValueAt(0, l_sibling_page-&gt;ValueAt(l_sibling_page-&gt;GetSize() - 1));
+    parent-&gt;SetKeyAt(index, l_sibling_page-&gt;KeyAt(l_sibling_page-&gt;GetSize() - 1));
+    page-&gt;IncreaseSize(1);
+    auto *redirect_page = reinterpret_cast&lt;BPlusTreePage *&gt;(
+        buffer_pool_manager_-&gt;FetchPage(l_sibling_page-&gt;ValueAt(l_sibling_page-&gt;GetSize() - 1))-&gt;GetData());
+    redirect_page-&gt;SetParentPageId(page-&gt;GetPageId());
+    l_sibling_page-&gt;DecreaseSize(1);
+    return;
+  }
+}
+</code></pre>
+<p>也是类似，要将借来的value重定向</p>
+<h3 id="133-合并右兄弟">1.3.3 合并右兄弟</h3>
+<h4 id="合并右leaf兄弟">合并右leaf兄弟</h4>
+<pre><code class="language-c++">
+auto *r = buffer_pool_manager_-&gt;FetchPage(r_sibling);
+r_sibling_page = reinterpret_cast&lt;LeafPage *&gt;(r-&gt;GetData());
+leaf_page-&gt;Merge(r_sibling_page);
+leaf_page-&gt;SetNextPageId(r_sibling_page-&gt;GetNextPageId());
+parent-&gt;DeleteByIndex(key_index_in_parent + 1);
+if (parent-&gt;IsRootPage() &amp;&amp; parent-&gt;GetSize() == 1) {
+    leaf_page-&gt;SetParentPageId(INVALID_PAGE_ID);
+    UpdateRootPageId(leaf_page-&gt;GetPageId());
+    root_page_id_ = leaf_page-&gt;GetPageId();
+    return;
+}
+SolveUnderFlow(transaction);
+return;
+</code></pre>
+<p>将右兄弟的所有key/vale依次插入本节点末尾，注意要进行<strong>leaf_page-&gt;SetNextPageId(r_sibling_page-&gt;GetNextPageId())<strong>操作，parent也要将右兄弟这对key/value删除，如果父节点</strong>是root且size == 1</strong>了，那么将该节点设为新的root，如果不是，则对父节点进行解决可能发生下溢操作</p>
+<h4 id="合并右internal兄弟">合并右internal兄弟</h4>
+<pre><code class="language-c++">r_sibling_page = reinterpret_cast&lt;InternalPage *&gt;(buffer_pool_manager_-&gt;FetchPage(r_sibling)-&gt;GetData());
+page-&gt;Merge(parent-&gt;KeyAt(index + 1), r_sibling_page, buffer_pool_manager_);
+parent-&gt;DeleteByIndex(index + 1);
+if (parent-&gt;GetSize() == 1 &amp;&amp; parent-&gt;IsRootPage()) {
+    UpdateRootPageId(page-&gt;GetPageId());
+    root_page_id_ = page-&gt;GetPageId();
+    page-&gt;SetParentPageId(INVALID_PAGE_ID);
+    return;
+}
+</code></pre>
+<h3 id="134-合并左兄弟">1.3.4 合并左兄弟</h3>
+<h4 id="合并左leaf兄弟">合并左leaf兄弟</h4>
+<pre><code class="language-c++">auto *l = buffer_pool_manager_-&gt;FetchPage(l_sibling);
+l_sibling_page = reinterpret_cast&lt;LeafPage *&gt;(l-&gt;GetData());
+l_sibling_page-&gt;Merge(leaf_page);
+parent-&gt;DecreaseSize(1);
+// l_sibling_page-&gt;SetNextPageId(INVALID_PAGE_ID);
+l_sibling_page-&gt;SetNextPageId(leaf_page-&gt;GetNextPageId());
+if (parent-&gt;IsRootPage() &amp;&amp; parent-&gt;GetSize() == 1) {
+    l_sibling_page-&gt;SetParentPageId(INVALID_PAGE_ID);
+    UpdateRootPageId(l_sibling_page-&gt;GetPageId());
+    root_page_id_ = l_sibling_page-&gt;GetPageId();
+    return;
+}
+SolveUnderFlow(transaction);
+</code></pre>
+<h4 id="合并左internal兄弟">合并左internal兄弟</h4>
+<pre><code class="language-c++">l_sibling_page = reinterpret_cast&lt;InternalPage *&gt;(buffer_pool_manager_-&gt;FetchPage(l_sibling)-&gt;GetData());
+l_sibling_page-&gt;Merge(parent-&gt;KeyAt(index), page, buffer_pool_manager_);
+parent-&gt;DecreaseSize(1);
+if (parent-&gt;GetSize() == 1 &amp;&amp; parent-&gt;IsRootPage()) {
+    UpdateRootPageId(l_sibling);
+    root_page_id_ = l_sibling;
+    l_sibling_page-&gt;SetParentPageId(INVALID_PAGE_ID);
+    return;
+}
+</code></pre>
+<h1 id="2concurrent-index">2.Concurrent Index</h1>
 
 </article>
 
@@ -359,6 +530,34 @@ auto BPLUSTREE_TYPE::Insert(const KeyType &amp;key, const ValueType &amp;value, 
   <ul>
     <li><a href="#11-getvalue"><strong>1.1 GetValue()</strong></a></li>
     <li><a href="#12-insert">1.2 Insert()</a></li>
+    <li><a href="#13-delete">1.3 Delete()</a>
+      <ul>
+        <li><a href="#131-向右兄弟借key">1.3.1 向右兄弟借key</a>
+          <ul>
+            <li><a href="#leaf节点向右兄弟借key">leaf节点向右兄弟借key</a></li>
+            <li><a href="#internal节点向右兄弟借key">internal节点向右兄弟借key</a></li>
+          </ul>
+        </li>
+        <li><a href="#132-向左兄弟借key">1.3.2 向左兄弟借key</a>
+          <ul>
+            <li><a href="#leaf向左兄弟借key">leaf向左兄弟借key</a></li>
+            <li><a href="#internal向左兄弟借key">internal向左兄弟借key</a></li>
+          </ul>
+        </li>
+        <li><a href="#133-合并右兄弟">1.3.3 合并右兄弟</a>
+          <ul>
+            <li><a href="#合并右leaf兄弟">合并右leaf兄弟</a></li>
+            <li><a href="#合并右internal兄弟">合并右internal兄弟</a></li>
+          </ul>
+        </li>
+        <li><a href="#134-合并左兄弟">1.3.4 合并左兄弟</a>
+          <ul>
+            <li><a href="#合并左leaf兄弟">合并左leaf兄弟</a></li>
+            <li><a href="#合并左internal兄弟">合并左internal兄弟</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
   </ul>
 </nav>
 </div>
